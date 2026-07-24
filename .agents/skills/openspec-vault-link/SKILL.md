@@ -20,7 +20,7 @@ Wire an OpenSpec change into the Obsidian vault so every artifact, source file, 
 
 If both `<change-name>` and `--all` are omitted, run `openspec list --json` and prompt via **AskUserQuestion** to pick a change. Filter to changes whose `proposal.md` lacks a `change/<name>` frontmatter tag (skip already-wired).
 
-**Cwd note**: The Obsidian vault root is the cwd of this skill (`./openspec/` and `./_context/` resolve from here). Paths in this document are relative to the vault root unless stated otherwise.
+**Cwd note**: The Obsidian vault root is the current repository root. Paths in this document are relative to the vault root unless stated otherwise.
 
 **Steps**
 
@@ -121,7 +121,7 @@ If both `<change-name>` and `--all` are omitted, run `openspec list --json` and 
    - **Active**: one line per active change folder, `- [[<name>/proposal|<name>]]`.
    - **Archived**: grouped by `### YYYY-MM`, one line per archive folder in that month. Sort months descending, entries within each month ascending.
    - **Specifications**: one line per capability folder under `./openspec/specs/`, `- [[<capability>/spec|<capability>]]`. Sorted alphabetically.
-   - **Project**: `- [[README|Aether Finance README]]` and `- [[AI_RULES|AI Rules]]`. Keep these as the last two lines of the file (after Project heading).
+    - **Project**: `- [[docs/README|Workspace Docs]]` and `- [[docs/obsidian|Obsidian and MCP Setup]]`. Keep these as the last two lines of the file (after Project heading).
    - Idempotency: skip an entry if its exact wikilink already appears under the right heading.
 
 8. **Output summary**
@@ -156,7 +156,7 @@ tags:
 
 # OpenSpec Index
 
-Single MOC for the OpenSpec folder in this vault. For project-wide context docs (architecture, decisions, conventions), see [[_context/README|Context]].
+Single MOC for the OpenSpec folder in this vault. For workspace conventions and setup, see [[docs/README|Workspace Docs]].
 
 ## Active
 
@@ -172,8 +172,8 @@ Single MOC for the OpenSpec folder in this vault. For project-wide context docs 
 
 ## Project
 
-- [[README|Aether Finance README]]
-- [[AI_RULES|AI Rules]]
+- [[docs/README|Workspace Docs]]
+- [[docs/obsidian|Obsidian and MCP Setup]]
 ```
 
 **Guardrails**
