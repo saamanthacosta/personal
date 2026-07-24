@@ -9,10 +9,14 @@ openspec/specs/
 
 portfolio/
 lazyFinances/
-openspec/
 uff/
-
-personal.code-workspace
 
 .DS_Store
 .vscode/*
+
+.env
+.env.*
+!.env.example
+.mcp*.json
+.obsidian/workspace.json.backup-*
+.obsidian/workspace.json.tmp
