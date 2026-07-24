@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "workspace-root",
+      "path": "."
+    },
+    {
+      "name": "lazy finances",
+      "path": "lazyFinances"
+    },
+    {
+      "name": "portfolio",
+      "path": "portfolio"
+    },
+    {
+      "name": "openspec",
+      "path": "openspec"
+    },
+    {
+      "name": "uff",
+      "path": "uff"
+    }
+  ],
+  "settings": {
+    "search.useIgnoreFiles": true,
+    "search.useParentIgnoreFiles": false
+  }
+}
