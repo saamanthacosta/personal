@@ -10,11 +10,19 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 ## Active
 
 - [[changes/workspace-vault-migration/proposal|workspace-vault-migration]]
-- [[changes/create-task-workflow/proposal|create-task-workflow]]
 
 ## Archived
 
+### 2026-07
+
+- [[changes/archive/2026-07-24-create-task-workflow/proposal|create-task-workflow]]
+
 ## Specifications
+
+- [[branch-preflight/spec|branch-preflight]]
+- [[task-delivery/spec|task-delivery]]
+- [[task-orchestration/spec|task-orchestration]]
+- [[task-quality-gates/spec|task-quality-gates]]
 
 ## Project
 
