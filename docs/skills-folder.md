@@ -9,7 +9,7 @@ Skill definitions (one folder per skill, each containing a `SKILL.md`) must be p
 - `Personal/.agents/skills/<skill-name>/SKILL.md`
 - `Personal/lazyFinances/.agents/skills/<skill-name>/SKILL.md`
 
-Do **not** create new skill folders under `.opencode/skills/`. The `.opencode/` folder is reserved for tooling installs (e.g. `package.json`, `node_modules/`) and global commands under `.opencode/commands/`. Skills are user-defined agent capabilities and belong in `.agents/`.
+Do not create skill folders under `.opencode/` or `.github/`. Shared and workspace skills belong in `.agents/skills/`.
 
 ## Why
 
@@ -23,6 +23,7 @@ Do **not** create new skill folders under `.opencode/skills/`. The `.opencode/` 
 Personal/.agents/skills/
   commit/
   create-pr/
+  cve-scan/
   openspec-apply-change/
   openspec-archive-change/
   openspec-explore/
@@ -41,4 +42,4 @@ Personal/lazyFinances/.agents/skills/
   openspec-vault-link/
 ```
 
-`.opencode/skills/` should not exist in either project. If you find it there, the contents are stale and must be moved into `.agents/skills/` and the empty directory removed.
+`.opencode/skills/` should not exist in either project. If a stale skill directory appears, move supported content into `.agents/skills/` and remove the stale copy.

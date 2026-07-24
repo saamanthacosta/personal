@@ -8,6 +8,9 @@ This folder stores notes, conventions, and rules for the `Personal/` workspace.
 - `commit-style.md` — convention for writing commit messages (mirrors the `commit` skill under `.agents/skills/commit/`).
 - `pr-style.md` — convention for opening PRs (mirrors the `create-pr` skill under `.agents/skills/create-pr/`).
 - `skills-folder.md` — rule for where skill definitions live (`.agents/skills/`, not `.opencode/skills/`).
+- `cve-methodology.md` — shared security severity ladder, gate mapping, and credential-handling rules.
+- `cve-reports/` — generated security scan reports and trend dashboard.
+- `obsidian.md` — tracked vault state, community-plugin setup, and MCP credential handling.
 
 ## Conventions
 
