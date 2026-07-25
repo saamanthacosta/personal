@@ -13,12 +13,8 @@
       "path": "portfolio"
     },
     {
-      "name": "openspec",
-      "path": "openspec"
-    },
-    {
-      "name": "uff",
-      "path": "uff"
+      "name": "mestrado-uff",
+      "path": "mestrado-uff"
     }
   ],
   "settings": {
