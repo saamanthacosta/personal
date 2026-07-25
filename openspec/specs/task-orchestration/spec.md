@@ -6,7 +6,7 @@ tags:
 # task-orchestration Specification
 
 ## Purpose
-TBD - created by archiving change create-task-workflow. Update Purpose after archive.
+The workspace provides a `create-task` skill that orchestrates end-to-end delivery of feature, fix, refactor, chore, docs, test, and perf changes from natural-language description to merged pull request. The orchestrator retains lifecycle ownership across specialist phases, resumes from the earliest incomplete phase, and never surrenders authority to a specialist.
 ## Requirements
 ### Requirement: A single skill orchestrates implementation tasks
 The workspace SHALL provide a `create-task` skill that accepts a natural-language task, classifies its type, derives a kebab-case slug, and drives a resumable workflow for features, fixes, refactors, chores, documentation, tests, and performance work. When the user explicitly invokes `create-task`, it SHALL retain ownership of the lifecycle until completion or an explicit pause, even when the task subject matches a specialist skill.
