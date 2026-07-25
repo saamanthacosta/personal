@@ -11,10 +11,10 @@ metadata:
 
 Propose a new change - create the change and generate all artifacts in one step.
 
-I'll create a change with artifacts:
-- proposal.md (what & why)
-- design.md (how)
-- tasks.md (implementation steps)
+I'll create a change with artifacts (subject-prefixed names preferred for new changes; flat role names allowed for tiny changes):
+- why.md (or proposal.md) — what & why
+- how.md (or design.md) — how
+- tasks.md — implementation steps
 
 When ready to implement, run /opsx-apply
 

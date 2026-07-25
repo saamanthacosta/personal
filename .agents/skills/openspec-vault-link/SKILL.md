@@ -11,14 +11,30 @@ metadata:
 Wire an OpenSpec change into the Obsidian vault so every artifact, source file, and spec is reachable from any other through wikilinks, tags, bookmarks, or the central MOC.
 
 **Input**:
-- `<change-name>` — process a single change (active under `openspec/changes/<name>/` or archived under `openspec/changes/archive/...`)
-- `--all` — process every change folder under `openspec/changes/` and `openspec/changes/archive/`
-- `--dry-run` (default `true`) — preview changes without writing
-- `--skip-tags` — do not modify frontmatter
-- `--skip-bookmarks` — do not touch `.obsidian/workspace.json`
-- `--skip-moc` — do not rewrite `openspec/INDEX.md`
+- `<change-name>` — process a single change (active under `openspec/changes/<name>/` or archived under `openspec/changes/archive/...`). Picks one change.
+- `--all` — process every change folder under `openspec/changes/` and `openspec/changes/archive/`. Useful for retrofitting after a rule change.
+- `--dry-run` (default `true`) — preview changes without writing. Set to `false` (or pass `--no-dry-run`) to actually write.
+- `--skip-tags` — do not modify frontmatter. Useful when only refreshing wikilinks or the MOC.
+- `--skip-bookmarks` — do not touch `.obsidian/workspace.json`. Useful in CI or non-vault environments.
+- `--skip-moc` — do not rewrite `openspec/INDEX.md`. Useful when the MOC is managed separately.
 
-If both `<change-name>` and `--all` are omitted, run `openspec list --json` and prompt via **AskUserQuestion** to pick a change. Filter to changes whose `proposal.md` lacks a `change/<name>` frontmatter tag (skip already-wired).
+**Naming convention** (for new OpenSpec changes):
+
+- Subject-prefixed filenames are preferred. Each change folder's artifacts are named after their purpose inside the change:
+  - `<change-name>/why.md` — the proposal.
+  - `<change-name>/how.md` — the design.
+  - `<change-name>/tasks.md` — unchanged.
+  - `<change-name>/specs/<capability>/spec.md` — delta spec (path unchanged).
+- For very small changes (one proposal, no design), an author may keep the flat role names `proposal.md`/`design.md`/`tasks.md`. The convention is preferred, not mandatory.
+- This rule is **forward-only** (see Forward-only below). The skill does not retroactively rename existing archived notes.
+
+**Forward-only**:
+
+- The subject-prefixed naming and the subject-based tag scheme apply to *new* changes from the `improve-vault-link` change forward.
+- Existing archived changes keep their flat `proposal.md`/`design.md`/`tasks.md` filenames. The skill must NOT rename them or rewrite wikilinks inside them.
+- New artifacts: use the convention from day one.
+
+If both `<change-name>` and `--all` are omitted, run `openspec list --json` and prompt via **AskUserQuestion** to pick a change. Skip changes that are already wired (their `proposal.md` has a `topic/<subject>` or `capability/<name>` frontmatter tag applied by a previous run).
 
 **Cwd note**: The Obsidian vault root is the current repository root. Paths in this document are relative to the vault root unless stated otherwise.
 
@@ -26,7 +42,7 @@ If both `<change-name>` and `--all` are omitted, run `openspec list --json` and 
 
 1. **Resolve targets**
 
-   - If `--all`: enumerate every folder under `./openspec/changes/` (top-level = active) and `./openspec/changes/archive/` (subdirs = archived). For each, check whether `proposal.md` already has `change/<folder-name>` in its frontmatter tags. Skip those that do.
+   - If `--all`: enumerate every folder under `./openspec/changes/` (top-level = active) and `./openspec/changes/archive/` (subdirs = archived). For each, check whether `proposal.md` already has a `topic/<subject>` or `capability/<name>` frontmatter tag applied by a previous run. Skip those that do.
    - If `<change-name>`: locate the folder. Prefer active under `./openspec/changes/<name>/`; fall back to `./openspec/changes/archive/*<name>/`. If ambiguous, prompt.
    - For each target, record: `folderPath`, `changeName`, `status` (`active` | `archived`), `proposalPath`, `designPath`, `tasksPath`, `deltaSpecs` (list of `./specs/<capability>/spec.md` if present), `capabilities` (extracted from delta-spec folder names).
 
@@ -78,10 +94,11 @@ If both `<change-name>` and `--all` are omitted, run `openspec list --json` and 
    For each artifact in the change folder (`proposal.md`, `design.md`, `tasks.md`, each delta spec), use `set_note_property` to set:
    ```yaml
    tags:
-     - change/<change-name>
-     - status/<active|archived>
+     - topic/<subject>      # one entry per subject the artifact covers (e.g. topic/cve, topic/pr-review, topic/skill-authoring)
      - capability/<capability>     # one entry per capability touched
    ```
+   The change name and active/archived status are encoded in the folder path; do NOT add `change/<name>` or `status/<active|archived>` tags (they are redundant and have been dropped as of the improve-vault-link change).
+
    Call `set_note_property` per tag (idempotent: it skips if the value already exists in a YAML list).
 
    For each canonical spec touched (in step 4), set:
@@ -118,7 +135,7 @@ If both `<change-name>` and `--all` are omitted, run `openspec list --json` and 
    - Read `./openspec/INDEX.md` if it exists, else create from the template below.
    - If creating, write the four-section template.
    - If updating, parse the existing sections and update entries in place. Preserve any content outside the four managed sections.
-   - **Active**: one line per active change folder, `- [[<name>/proposal|<name>]]`.
+   - **Active**: one line per active change folder, `- [[<name>/<proposal-or-why>|<name>]]` (use `why.md` if the change adopted the subject-prefixed convention; otherwise `proposal.md`).
    - **Archived**: grouped by `### YYYY-MM`, one line per archive folder in that month. Sort months descending, entries within each month ascending.
    - **Specifications**: one line per capability folder under `./openspec/specs/`, `- [[<capability>/spec|<capability>]]`. Sorted alphabetically.
     - **Project**: `- [[../.agents/skills/README|Workspace Docs]]` and `- [[obsidian|Obsidian and MCP Setup]]`. Keep these as the last two lines of the file (after Project heading).
