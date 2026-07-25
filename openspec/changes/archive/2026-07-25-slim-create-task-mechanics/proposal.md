@@ -28,3 +28,12 @@ None. The `task-orchestration` Purpose line replacement is metadata normalizatio
 - Behavior preservation is verified by smoke test (dry-run on a trivial task).
 - The doc location (`docs/task-workflow.md`) sets a precedent: workflow docs live alongside skills in `docs/`. The `docs/skills-folder.md` precedent doc is deferred to a future refactor.
 - CVE scan: staged scan on the refactor's commit must remain clean (no new code, but rule kept for safety).
+
+## Security Considerations
+
+- **Data touched**: Workspace documentation (Markdown files). No PII, secrets, credentials, tokens, or customer content. The create-task SKILL.md shrank but no semantic content changed.
+- **Trust boundaries crossed**: None. The orchestrator skill's invocation surface is unchanged. No new privileges, no new authentication, no new dependencies.
+- **Third-party trust**: None added. No new dependencies, no new APIs, no new external services. The refactor reorganizes existing instructions.
+- **Persistence layer**: One new documentation file (`docs/task-workflow.md`) is added. No persistent state changes, no database writes, no new caches.
+- **Privilege escalation surface**: None. The skill is a prompt template, not a runtime. No auth, RBAC, sudo, or IAM surface.
+- **Override requests**: None.
