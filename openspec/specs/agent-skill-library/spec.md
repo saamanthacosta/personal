@@ -25,6 +25,17 @@ The shared skill library SHALL expose the CVE severity ladder, threat-model ques
 - **WHEN** a scan reports CRITICAL, HIGH, MEDIUM, or LOW findings
 - **THEN** the workflow applies the severity and override behavior defined by the shared methodology document
 
+### Requirement: PR review skills are part of the approved library
+The root `.agents/skills/` library SHALL include `pr-review-comments` and `fix-pr-review-comments` in the approved PR-category inventory, with valid frontmatter and unique names following the same rules as the rest of the library.
+
+#### Scenario: Library lists both PR review skills
+- **WHEN** the library inventory enumerates `.agents/skills/`
+- **THEN** both `pr-review-comments/SKILL.md` and `fix-pr-review-comments/SKILL.md` exist with valid frontmatter
+
+#### Scenario: Skill names do not collide
+- **WHEN** the library validates skill folder names
+- **THEN** `pr-review-comments` and `fix-pr-review-comments` do not collide with any other skill folder name
+
 ### Requirement: Shared skills use supported OpenCode metadata
 Every shared skill SHALL limit behavioral claims to mechanisms OpenCode recognizes and MUST NOT rely on ignored frontmatter fields to control whether the model may load or select the skill.
 
