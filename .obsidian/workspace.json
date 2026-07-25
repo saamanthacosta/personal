@@ -172,6 +172,13 @@
     "docs/README.md"
   ],
   "bookmarks": {
-    "items": []
+    "items": [
+      {
+        "type": "folder",
+        "ctime": 1784927110677,
+        "path": "openspec/changes/archive/2026-07-24-create-task-workflow",
+        "title": "create-task-workflow (2026-07-24)"
+      }
+    ]
   }
 }

@@ -1,3 +1,10 @@
+---
+tags:
+  - change/create-task-workflow
+  - status/archived
+  - capability/task-quality-gates
+---
+
 ## ADDED Requirements
 
 ### Requirement: OpenSpec and security gates run in order
@@ -29,3 +36,11 @@ Before delivery, the workflow SHALL inspect project documentation and manifests 
 #### Scenario: No project test command exists
 - **WHEN** the repository has no documented or declared test command
 - **THEN** the workflow reports the check as unavailable and asks whether to continue, rather than inventing a command
+
+## Related
+
+- [[../../../../specs/task-quality-gates/spec|task-quality-gates (canonical)]]
+- [[../../proposal|Proposal]]
+- [[../../design|Design]]
+- [[../../tasks|Tasks]]
+

@@ -1,3 +1,13 @@
+---
+tags:
+  - change/create-task-workflow
+  - status/archived
+  - capability/branch-preflight
+  - capability/task-delivery
+  - capability/task-orchestration
+  - capability/task-quality-gates
+---
+
 ## Why
 
 Implementation work currently depends on manually remembering several separate OpenSpec, Git, security, and PR steps. That makes it easy to begin on a stale or incorrect branch, skip the CVE methodology, or create a PR before the worktree and verification state are safe. A single resumable `create-task` workflow will make the agreed process the normal path for features, fixes, refactors, and other implemented work.
@@ -33,3 +43,13 @@ Implementation work currently depends on manually remembering several separate O
 - Git worktree state, branches, stashes, remotes, commits, and GitHub pull requests.
 - No automatic changes to application code beyond the tasks explicitly selected by the user.
 - Requires a target repository with a usable `main` branch and remote for the full push/PR path; gracefully stops or offers a commit-only path when those prerequisites are absent.
+
+## Related
+
+- [[design|Design]]
+- [[tasks|Tasks]]
+- [[specs/branch-preflight/spec|branch-preflight]]
+- [[specs/task-delivery/spec|task-delivery]]
+- [[specs/task-orchestration/spec|task-orchestration]]
+- [[specs/task-quality-gates/spec|task-quality-gates]]
+

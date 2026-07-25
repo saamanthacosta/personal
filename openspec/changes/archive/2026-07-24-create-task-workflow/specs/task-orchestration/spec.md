@@ -1,3 +1,10 @@
+---
+tags:
+  - change/create-task-workflow
+  - status/archived
+  - capability/task-orchestration
+---
+
 ## ADDED Requirements
 
 ### Requirement: A single skill orchestrates implementation tasks
@@ -25,3 +32,11 @@ The workflow SHALL inspect OpenSpec artifacts, task status, Git state, and prior
 #### Scenario: Completed delivery is not repeated
 - **WHEN** the current branch already has an upstream and an existing PR
 - **THEN** the workflow reports the existing PR and does not create a duplicate
+
+## Related
+
+- [[../../../../specs/task-orchestration/spec|task-orchestration (canonical)]]
+- [[../../proposal|Proposal]]
+- [[../../design|Design]]
+- [[../../tasks|Tasks]]
+

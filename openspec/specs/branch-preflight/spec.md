@@ -1,5 +1,13 @@
-## ADDED Requirements
+---
+tags:
+  - capability/branch-preflight
+---
 
+# branch-preflight Specification
+
+## Purpose
+TBD - created by archiving change create-task-workflow. Update Purpose after archive.
+## Requirements
 ### Requirement: New tasks begin from an up-to-date main branch
 Before exploration, proposal creation, application, or other task file changes, the workflow SHALL resolve the target Git repository, confirm the task type and slug, switch or checkout `main`, update it with fast-forward-only behavior, and create the type-appropriate task branch.
 
@@ -36,3 +44,9 @@ The workflow SHALL refuse to proceed when the target repository, `main` branch, 
 #### Scenario: Target repository is the workspace container
 - **WHEN** invocation from a multi-repository workspace resolves to a container repository rather than the intended project
 - **THEN** the workflow asks the user to select or enter the target project before running Git mutations
+
+## History
+
+- [[../../changes/archive/2026-07-24-create-task-workflow/proposal|create-task-workflow (2026-07-24)]] — Implementation work currently depends on manually remembering several separate OpenSpec, Git, security, and PR steps.
+
+

@@ -1,3 +1,13 @@
+---
+tags:
+  - change/create-task-workflow
+  - status/archived
+  - capability/branch-preflight
+  - capability/task-delivery
+  - capability/task-orchestration
+  - capability/task-quality-gates
+---
+
 ## Context
 
 The workspace has separate skills for exploration, OpenSpec proposal/apply, commits, pull requests, and CVE scanning. Those skills define useful phase behavior but do not provide one reliable entry point for a new feature, fix, refactor, or other implementation task. The workflow also spans multiple Git repositories and must establish a branch from an up-to-date `main` before any task exploration or file edits.
@@ -92,3 +102,13 @@ Opening a PR does not archive the OpenSpec change. Vault linking may run when th
 - When invoked from the `Personal/` workspace root, should the workflow require the user to select a child repository or require invocation from the target repository root?
 - Should trivial documentation-only changes bypass OpenSpec while retaining branch and verification gates?
 - Should a global command alias be added later, or is natural-language loading of the `.agents/skills/create-task/` skill sufficient?
+
+## Related
+
+- [[proposal|Proposal]]
+- [[tasks|Tasks]]
+- [[specs/branch-preflight/spec|branch-preflight]]
+- [[specs/task-delivery/spec|task-delivery]]
+- [[specs/task-orchestration/spec|task-orchestration]]
+- [[specs/task-quality-gates/spec|task-quality-gates]]
+

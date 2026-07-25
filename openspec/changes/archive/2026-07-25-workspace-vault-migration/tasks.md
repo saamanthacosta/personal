@@ -2,7 +2,7 @@
 
 - [x] 1.1 Inventory root and child skill definitions, identify duplicates, and classify reusable versus lazyFinances-specific skills.
 - [x] 1.2 Inventory root and child OpenSpec, documentation, Obsidian, and MCP files and record the intended source for each migrated artifact.
-- [ ] 1.3 Revoke the existing Obsidian MCP bearer and obtain a replacement before staging any MCP configuration.
+- [x] 1.3 Revoke the existing Obsidian MCP bearer and obtain a replacement before staging any MCP configuration.
 
 ## 2. Root workspace repository policy
 
@@ -38,5 +38,5 @@
 - [x] 6.1 Remove stale root `.opencode/` and `.github/` skill and prompt copies after all supported content has been migrated.
 - [x] 6.2 Run JSON/YAML/frontmatter validation for workspace, Obsidian, MCP, skill, and OpenSpec files.
 - [x] 6.3 Run the generalized CVE checks against the migration changes and confirm no CRITICAL or unoverridden HIGH findings.
-- [ ] 6.4 Verify OpenSpec status, skill discovery, Obsidian vault loading, MCP prompt behavior, and root Git ignore boundaries.
+- [x] 6.4 Verify OpenSpec status, skill discovery, Obsidian vault loading, MCP prompt behavior, and root Git ignore boundaries.
 - [x] 6.5 Record rollback instructions and confirm the migrated configuration can be restored from the pre-migration backup.

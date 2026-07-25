@@ -1,5 +1,13 @@
-## ADDED Requirements
+---
+tags:
+  - capability/task-delivery
+---
 
+# task-delivery Specification
+
+## Purpose
+TBD - created by archiving change create-task-workflow. Update Purpose after archive.
+## Requirements
 ### Requirement: Commits follow workspace conventions
 The workflow SHALL use the commit skill's grouping and message rules, stage only intended files, and require a clean, security-checked staged diff before committing.
 
@@ -39,3 +47,9 @@ Opening a PR SHALL NOT archive the associated OpenSpec change unless the user ex
 #### Scenario: Implementation reaches PR state
 - **WHEN** the PR is successfully opened
 - **THEN** the workflow reports archive as a separate optional follow-up and leaves the OpenSpec change active
+
+## History
+
+- [[../../changes/archive/2026-07-24-create-task-workflow/proposal|create-task-workflow (2026-07-24)]] — Implementation work currently depends on manually remembering several separate OpenSpec, Git, security, and PR steps.
+
+
