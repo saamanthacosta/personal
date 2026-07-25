@@ -1,10 +1,10 @@
 ---
 name: create-task
-description: Orchestrate a new implementation task from classification through PR. Use when the user wants to start a feature, fix, refactor, chore, docs, test, or performance task that requires a branch, OpenSpec artifacts, quality gates, spec archival, commit, push, and pull request.
+description: Orchestrate an explicitly requested implementation task from classification through PR, including work that creates or modifies reusable skills. Use when the user wants a feature, fix, refactor, chore, docs, test, or performance task with a branch, OpenSpec artifacts, quality gates, spec archival, commit, push, and pull request. Once invoked, this workflow remains authoritative when the task also matches a specialist skill.
 license: MIT
 metadata:
   author: saamanthacosta
-  version: "1.2"
+  version: "1.3"
 ---
 
 # create-task
@@ -36,6 +36,12 @@ Mapping is fixed; do not invent types without confirmation.
 | `test`      | `test/<slug>`       | Adding or restructuring tests only                    |
 | `perf`      | `perf/<slug>`       | Performance work with no behavior change              |
 
+Personal skill work uses these existing types rather than introducing a `skill`
+type. Creating a new reusable skill is a `chore`; correcting broken skill behavior
+is a `fix`; restructuring without behavior change is a `refactor`; documentation
+work or test-only work keeps the corresponding type. Confirm the selected type and
+branch before repository mutation.
+
 ### 1.2 Slug derivation
 
 Derive a kebab-case slug from the user's words: lowercase, ASCII letters/digits,
@@ -58,6 +64,12 @@ preflight → explore → propose → apply → verify → archive → cve-repor
 
 Resume detection: read OpenSpec status, task checkboxes, current branch,
 `git status`, upstream tracking, and existing PRs before deciding what to skip.
+
+**Orchestrator ownership:** once the user explicitly invokes `create-task`, this
+workflow remains authoritative from preflight through PR. A specialist skill
+loaded during `apply` provides bounded methodology for that phase and returns
+control afterward. Specialist completion is not task completion, and clarification
+inside a specialist pauses and resumes the same `create-task` phase.
 
 ### 1.4 Approval checkpoints
 
@@ -160,6 +172,11 @@ inline rather than reimplementing them.
 - **propose** → apply `openspec-propose` rules, including proposal/design
   security validation from §4.2.
 - **apply** → apply `openspec-apply-change` rules, including the full audit from §4.4.
+  When the task subject matches a specialist skill, load and apply that skill as
+  bounded phase guidance. Require a visible `## Specialist Phase: <name> — done`
+  boundary, then continue with the next incomplete `create-task` phase. Never let
+  a specialist completion summary replace verify, archive, security, commit, push,
+  or PR delivery.
 - **verify** → run the repository and implementation checks defined in §4.3.
 - **archive** → after verification passes, synchronously apply all delta specs and
   archive with `openspec-archive-change`, then perform best-effort
@@ -230,6 +247,8 @@ Before exiting explore, ensure the user has answered (or explicitly waived) each
 - Third-party trust (deps, APIs, models, supply chain)?
 - Persistence (DB, files, cache, logs)?
 - Privilege escalation surface (auth, RBAC, sudo, IAM)?
+- Specialist handoff (does the task match another skill, and if so, how will that
+  phase return control without skipping verification or delivery)?
 
 Record answers in the explore notes.
 
@@ -439,6 +458,11 @@ verified, stop before PR creation.
 ### 6.2 Verification and CVE-report output
 
 ```
+## Specialist Phase: <name> — done
+- Result: <specialist output and path>
+- Status: <validated | needs clarification>
+- Next: <next create-task phase>
+
 ## Verification — Pre-Archive
 | Check      | Command           | Status | Notes                |
 | ---------- | ----------------- | ------ | -------------------- |
@@ -484,5 +508,7 @@ verified, stop before PR creation.
 - Never archive without synchronizing all delta specs into canonical specs.
 - Never commit before the OpenSpec change has been archived and post-archive CVE reports pass.
 - Never assume a package manager, test runner, or remote provider.
+- Never surrender lifecycle ownership to a specialist skill after `create-task` has been explicitly invoked.
+- Never treat specialist completion as permission to skip verification, archive, security, commit, push, or PR phases.
 - Never open a PR on a failed push or failed check.
 - Never stash existing commits; only stash working-tree changes.

@@ -43,16 +43,24 @@ After drafting, the workflow SHALL identify weak or ambiguous behavior and SHALL
 - **WHEN** review finds no material ambiguity
 - **THEN** the workflow finalizes without inventing a ceremonial clarification question
 
-### Requirement: Completion guidance
-After finalization, the workflow SHALL summarize what the skill produces, provide representative prompts for invoking it, suggest relevant follow-on customizations, and remind the user to restart OpenCode so the new skill is loaded.
+### Requirement: Context-appropriate completion guidance
+After finalization, the workflow SHALL distinguish standalone invocation from use inside an active parent orchestrator. Standalone use SHALL summarize what the skill produces, provide representative prompts, suggest relevant follow-on customizations, and remind the user to restart OpenCode. Nested use SHALL report specialist-phase completion and return control without terminating the parent workflow.
 
-#### Scenario: Skill creation completes
-- **WHEN** the `SKILL.md` is finalized and validated
+#### Scenario: Standalone skill creation completes
+- **WHEN** the `SKILL.md` is finalized and validated without an active parent orchestrator
 - **THEN** the user receives a concise description of the output, example invocation prompts, optional related customization ideas, and the restart reminder
 
-### Requirement: Explicit invocation
-The `create-skill` skill MUST disable automatic model invocation so that it runs only when intentionally requested.
+#### Scenario: Nested skill creation completes
+- **WHEN** the `SKILL.md` is finalized and validated inside an active `create-task` workflow
+- **THEN** the skill emits a specialist-phase boundary and returns control for verification, archive, security reporting, commit, push, and PR phases
+
+### Requirement: Supported invocation boundary
+The `create-skill` skill MUST express its standalone trigger and nested ownership boundary through its supported `description` field and body instructions. It MUST NOT rely on unknown frontmatter fields to control model invocation.
+
+#### Scenario: Skill metadata is validated
+- **WHEN** the `create-skill` frontmatter and instructions are reviewed
+- **THEN** invocation behavior is described without `disable-model-invocation` or any other unsupported control field
 
 #### Scenario: Adjacent customization request
-- **WHEN** a user discusses customization without explicitly invoking the create-skill workflow
-- **THEN** the skill is not automatically selected solely because the topic is related
+- **WHEN** a user discusses customization without explicitly requesting standalone skill authoring
+- **THEN** the description and body identify that `create-skill` is not the sole workflow owner unless directly invoked
