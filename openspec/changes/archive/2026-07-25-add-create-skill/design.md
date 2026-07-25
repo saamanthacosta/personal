@@ -41,9 +41,13 @@ The workflow first reviews the conversation for a repeatable process, decision p
 
 The workflow writes an initial draft, reviews the most ambiguous or weak portions, and asks the user only about issues that materially affect behavior. When no material ambiguity remains, it may finalize without manufacturing a question. Completion includes structural validation, a concise outcome summary, example invocation prompts, and optional related customization ideas.
 
-### Preserve explicit invocation behavior
+### Encode invocation boundaries with supported mechanisms
 
-The new `create-skill` skill will set `disable-model-invocation: true`, matching the supplied source behavior so it runs only when intentionally invoked rather than being selected automatically for adjacent customization work.
+The new `create-skill` skill will express its standalone trigger through the supported `description` field and body instructions. It will not rely on unknown frontmatter fields, because OpenCode ignores fields other than `name`, `description`, `license`, `compatibility`, and `metadata`.
+
+### Return control when nested in `create-task`
+
+When `create-skill` is loaded during an active `create-task` workflow, authoring completion is a specialist phase boundary rather than task completion. The skill emits a nested completion block and returns control to `create-task`; standalone invocation retains the summary, examples, suggestions, and restart reminder.
 
 ## Risks / Trade-offs
 
@@ -52,6 +56,7 @@ The new `create-skill` skill will set `disable-model-invocation: true`, matching
 - **Iterative questions become ceremonial** → Ask only about material ambiguity and permit immediate finalization when the draft is already precise.
 - **Output escapes the repository convention** → State the exclusive `.agents/skills/<name>/SKILL.md` path as a hard guardrail and validate it before writing.
 - **A generated description does not trigger reliably** → Require third-person, front-loaded trigger language covering both what the skill does and when it applies.
+- **Description-based routing remains probabilistic** → State standalone and nested ownership boundaries in both the description and body, and return control explicitly when `create-task` owns the lifecycle.
 
 ## Security Considerations
 
@@ -60,4 +65,4 @@ The new `create-skill` skill will set `disable-model-invocation: true`, matching
 - Third-party trust: `customize-opencode` is the single third-party reference; the workflow loads it but never executes any commands from it. The personal `.agents/` directory is the only write target, so misrouting is contained.
 - Persistence: only Markdown files under `.agents/skills/<name>/SKILL.md`. No database, cache, or log writes. Existing skills are never modified.
 - Privilege escalation surface: none. The skill is invoked by user intent and inherits OpenCode's normal permissions; it does not request `bash` or expanded edit scopes.
-- Residual risk: a generated description may misclassify adjacency and trigger the skill on unrelated topics. Mitigated by `disable-model-invocation: true` so the skill only runs when intentionally invoked.
+- Residual risk: a generated description may misclassify adjacency and trigger the skill on unrelated topics. Mitigated by redundant trigger wording and explicit nested return-control instructions, not by an unsupported frontmatter guarantee.

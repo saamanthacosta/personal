@@ -9,7 +9,8 @@ The personal repository has reusable skills but no canonical workflow for turnin
 - Clarify the desired outcome, scope, and workflow depth only when conversation context is insufficient.
 - Follow the built-in `customize-opencode` skill guidance for valid skill structure, naming, frontmatter, descriptions, and trigger quality.
 - Restrict generated personal skills to `.agents/skills/<name>/SKILL.md`; never create skill copies under `.opencode/` or global configuration paths.
-- Draft, inspect weak or ambiguous sections, iterate with the user when needed, and finish with example prompts and related customization ideas.
+- Draft, inspect weak or ambiguous sections, iterate with the user when needed, and finish with context-appropriate completion output.
+- Use supported description and body instructions for standalone invocation boundaries; when loaded inside `create-task`, return control to the parent workflow after skill authoring.
 
 ## Capabilities
 
@@ -23,8 +24,8 @@ The personal repository has reusable skills but no canonical workflow for turnin
 
 - Threat model summary: `create-skill` is a documentation-only prompt template. It reads conversation context, drafts Markdown, and writes files under `.agents/skills/`. It executes no code, makes no network calls, and handles no user data.
 - Affected data and trust boundaries: the only external trust dependency is the OpenCode built-in `customize-opencode` skill, which is loaded for structural reference only; no other repositories or services are touched.
-- Mitigations: scope-limited output destination (`.agents/skills/<name>/SKILL.md` only), explicit invocation via `disable-model-invocation: true`, and adherence to the frontmatter/discoverability rules from `customize-opencode` to keep generated skills well-formed.
-- Residual risk: skill authored with a misleading description could load with low relevance; mitigated by the trigger-oriented description requirement and the post-draft validation step.
+- Mitigations: scope-limited output destination (`.agents/skills/<name>/SKILL.md` only), a trigger-oriented description, explicit standalone-versus-nested body instructions, and adherence to the frontmatter/discoverability rules from `customize-opencode`.
+- Residual risk: model-driven skill selection remains probabilistic; redundant ownership boundaries in `create-skill` and `create-task` reduce ambiguity without claiming a hard runtime guarantee.
 
 ## Impact
 
