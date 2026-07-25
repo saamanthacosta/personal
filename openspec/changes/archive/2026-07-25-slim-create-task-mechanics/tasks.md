@@ -44,10 +44,10 @@
 
 ## 6. Commit, push, and open PR
 
-- [ ] 6.1 Stage only the intended files: `docs/task-workflow.md`, `.agents/skills/create-task/SKILL.md`, `openspec/specs/task-orchestration/spec.md`
-- [ ] 6.2 Run staged CVE scan (`node .agents/skills/cve-scan/bin/scan-staged.mjs`) — must exit 0
-- [ ] 6.3 Commit with the title and body per the existing commit style (≤ 30 chars title, single-line body paragraphs)
-- [ ] 6.4 Push to `origin/refactor/slim-create-task-mechanics`
-- [ ] 6.5 Verify upstream is set (`git rev-parse --abbrev-ref --symbolic-full-name @{u}`) and `git ls-remote` shows the branch
-- [ ] 6.6 Open PR via `create-pr` skill format — base: main, head: refactor/slim-create-task-mechanics, auto-assign to current GitHub user
-- [ ] 6.7 Return the PR URL
+- [x] 6.1 Stage only the intended files: `docs/task-workflow.md`, `.agents/skills/create-task/SKILL.md`, `openspec/specs/task-orchestration/spec.md`, `openspec/changes/slim-create-task-mechanics/*` ✓
+- [x] 6.2 Run staged CVE scan (`node .agents/skills/cve-scan/bin/scan-staged.mjs`) — exit 0, no findings (gitleaks not installed, secret coverage reduced) ✓
+- [x] 6.3 Commit with the title and body per the existing commit style (≤ 30 chars title, single-line body paragraphs) ✓
+- [x] 6.4 Push to `origin/refactor/slim-create-task-mechanics` ✓
+- [x] 6.5 Verify upstream is set (`git rev-parse --abbrev-ref --symbolic-full-name @{u}`) and `git ls-remote` shows the branch ✓
+- [x] 6.6 Open PR via `create-pr` skill format — base: main, head: refactor/slim-create-task-mechanics, auto-assign to current GitHub user ✓
+- [x] 6.7 Return the PR URL — https://github.com/saamanthacosta/personal/pull/9 ✓
