@@ -1,18 +1,19 @@
 # Personal Workspace Docs
 
-This folder stores notes, conventions, and rules for the `Personal/` workspace.
+Workspace-level notes, conventions, and rules for the `Personal/` repository. Skill-specific documentation lives next to each skill under `.agents/skills/<skill>/`.
 
 ## Layout
 
-- `workspace.md` — rules for the `personal.code-workspace` file and how new git projects are added.
-- `commit-style.md` — convention for writing commit messages (mirrors the `commit` skill under `.agents/skills/commit/`).
-- `pr-style.md` — convention for opening PRs (mirrors the `create-pr` skill under `.agents/skills/create-pr/`).
-- `skills-folder.md` — rule for where skill definitions live (`.agents/skills/`, not `.opencode/skills/`).
-- `cve-methodology.md` — shared security severity ladder, gate mapping, and credential-handling rules.
-- `cve-reports/` — generated security scan reports and trend dashboard.
-- `obsidian.md` — tracked vault state, community-plugin setup, and MCP credential handling.
+- `workspace.md` — rules for `personal.code-workspace` and how new git projects are added at the root.
+- `cve-reports/` — generated security scan reports and the trend dashboard.
+- Skill-level docs and helper scripts (see `.agents/skills/README.md` for the library layout and naming rules):
+  - `../.agents/skills/create-task/task-workflow.md`
+  - `../.agents/skills/create-pr/pr-style.md`
+  - `../.agents/skills/commit/commit-style.md`
+  - `../.agents/skills/cve-scan/cve-methodology.md`
+  - `../.agents/skills/openspec-vault-link/obsidian.md`
 
 ## Conventions
 
 - New top-level git projects added to `Personal/` must be registered in `personal.code-workspace` (see `workspace.md`).
-- Commit messages follow the format documented in `commit-style.md` and enforced by the `commit` skill.
+- Commit messages follow the format documented in `../.agents/skills/commit/commit-style.md` and enforced by the `commit` skill.

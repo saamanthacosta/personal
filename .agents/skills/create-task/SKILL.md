@@ -19,7 +19,7 @@ subroutines. The phases below apply the canonical rules of the existing skills
 `openspec-archive-change`, `openspec-vault-link`, `commit`, `create-pr`,
 `cve-scan`) rather than reimplementing them.
 
-**Read `docs/task-workflow.md` once at the start of any workflow run.** This
+**Read `task-workflow.md` once at the start of any workflow run.** This
 skill holds the orchestrator's policy and contracts; the doc holds the per-phase
 mechanics (commands, formats, recovery recipes).
 
@@ -81,24 +81,24 @@ Never auto-reset, force-push, or silently drop work.
 
 ## 2. OpenSpec phase integration
 
-OpenSpec phases are prompts, not executable subroutines. Apply their rules inline rather than reimplementing them. Per-phase mechanics live in `docs/task-workflow.md`.
+OpenSpec phases are prompts, not executable subroutines. Apply their rules inline rather than reimplementing them. Per-phase mechanics live in `task-workflow.md`.
 
 ### 2.1 Phase integration
 
 - **explore** → apply `openspec-explore` rules, including the CVE threat-model prompts from §3.1.
 - **propose** → apply `openspec-propose` rules, including proposal/design security validation from §3.2.
 - **apply** → apply `openspec-apply-change` rules, including the full audit from §3.4. When the task subject matches a specialist skill, load and apply that skill as bounded phase guidance. Require a visible `## Specialist Phase: <name> — done` boundary, then continue with the next incomplete `create-task` phase. Never let a specialist completion summary replace verify, archive, security, commit, push, or PR delivery.
-- **verify** → run the repository and implementation checks defined in `docs/task-workflow.md` under "Phase: verify".
-- **archive** → after verification passes, synchronously apply all delta specs and archive with `openspec-archive-change`, then perform best-effort `openspec-vault-link` wiring. Sync and archive must complete before CVE reports. Mechanics in `docs/task-workflow.md` under "Phase: archive".
+- **verify** → run the repository and implementation checks defined in `task-workflow.md` under "Phase: verify".
+- **archive** → after verification passes, synchronously apply all delta specs and archive with `openspec-archive-change`, then perform best-effort `openspec-vault-link` wiring. Sync and archive must complete before CVE reports. Mechanics in `task-workflow.md` under "Phase: archive".
 - **cve-report** → after archive, generate the final full-audit report and trend index defined in §3.4 mechanics. The staged scan runs after staging but before `git commit`; all security gates must pass before the commit executes.
 
 ### 2.2 Visible checkpoints
 
-After each phase, print the format in `docs/task-workflow.md` under "Output formats / Phase output". Pause phases: clarification, proposal approval, blocker during apply, completion of a destructive step. Use the `question` tool for clarification when ambiguous type/slug/repo arises; otherwise surface the pause in plain text and wait.
+After each phase, print the format in `task-workflow.md` under "Output formats / Phase output". Pause phases: clarification, proposal approval, blocker during apply, completion of a destructive step. Use the `question` tool for clarification when ambiguous type/slug/repo arises; otherwise surface the pause in plain text and wait.
 
 ### 2.3 Archive before commit (gate)
 
-The sync-then-archive sequence must complete before any commit preparation. Mechanics for the sync steps, archive move, and verification live in `docs/task-workflow.md` under "Phase: archive". This gate is the policy: do not prepare or stage a commit until the archive phase reports success and the active change is gone from `openspec list --json`.
+The sync-then-archive sequence must complete before any commit preparation. Mechanics for the sync steps, archive move, and verification live in `task-workflow.md` under "Phase: archive". This gate is the policy: do not prepare or stage a commit until the archive phase reports success and the active change is gone from `openspec list --json`.
 
 An archive or synchronization failure blocks the CVE-report and commit phases. Vault-link failure does not undo a successful archive, but it must be reported in verification notes. Proceed next to `cve-report`, never directly to commit.
 
@@ -106,9 +106,9 @@ An archive or synchronization failure blocks the CVE-report and commit phases. V
 
 ### 3.1 Explore — CVE threat-model gate
 
-Apply the five threat-model questions from `docs/cve-methodology.md` (the "Threat-Model Questions" section) before exiting explore, plus the create-task-specific "Specialist handoff" prompt below. The methodology document owns the five threat-model questions; this orchestrator owns the sixth.
+Apply the five threat-model questions from `../cve-scan/cve-methodology.md` (the "Threat-Model Questions" section) before exiting explore, plus the create-task-specific "Specialist handoff" prompt below. The methodology document owns the five threat-model questions; this orchestrator owns the sixth.
 
-The five (from `docs/cve-methodology.md`):
+The five (from `../cve-scan/cve-methodology.md`):
 
 1. What data classes does the change read, write, transmit, or expose?
 2. Which trust boundaries does it cross?
@@ -120,7 +120,7 @@ The sixth (orchestrator-specific):
 
 - Specialist handoff: does the task match another skill, and if so, how will that phase return control without skipping verification or delivery?
 
-This orchestrator gate-checks that the explore phase surfaced and answered (or explicitly waived) all six, and that the answers are recorded in the explore notes. If `docs/cve-methodology.md` is not in context, read it to confirm the canonical wording.
+This orchestrator gate-checks that the explore phase surfaced and answered (or explicitly waived) all six, and that the answers are recorded in the explore notes. If `../cve-scan/cve-methodology.md` is not in context, read it to confirm the canonical wording.
 
 ### 3.2 Proposal/design — security-section validation
 
@@ -135,7 +135,7 @@ Missing section → blocking finding; pause and ask for the section or an explic
 
 ### 3.3 Verify phase scope (rule)
 
-The `verify` phase runs before archive and covers non-CVE correctness checks. Mechanics for scope, repository verification discovery, and result handling live in `docs/task-workflow.md` under "Phase: verify". This rule is the policy: do not advance to archive until every required check is recorded with exit status and blocking decision.
+The `verify` phase runs before archive and covers non-CVE correctness checks. Mechanics for scope, repository verification discovery, and result handling live in `task-workflow.md` under "Phase: verify". This rule is the policy: do not advance to archive until every required check is recorded with exit status and blocking decision.
 
 Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory post-archive `cve-report` phase.
 
@@ -155,17 +155,17 @@ A missing final report, stale trend index, scanner error, CRITICAL finding, or u
 
 ### 3.5 Pre-PR readiness rule
 
-Immediately before opening a PR, the readiness checks must all pass. Mechanics (the specific commands and verification order) live in `docs/task-workflow.md` under "Phase: pre-pr". This rule is the policy: any failure of a readiness check stops the workflow before PR creation.
+Immediately before opening a PR, the readiness checks must all pass. Mechanics (the specific commands and verification order) live in `task-workflow.md` under "Phase: pre-pr". This rule is the policy: any failure of a readiness check stops the workflow before PR creation.
 
 ## 4. Commit, push, and PR delivery gates
 
 ### 4.1 Archive gate
 
-Do not prepare or stage a commit until §2.3 is complete. Mechanics for the archive confirmations live in `docs/task-workflow.md`.
+Do not prepare or stage a commit until §2.3 is complete. Mechanics for the archive confirmations live in `task-workflow.md`.
 
 ### 4.2 CVE-report gate
 
-After archive and before commit preparation, the post-archive CVE report and trend index must be generated, validated, and added to the intended commit file list. Mechanics in `docs/task-workflow.md` under "Phase: cve-report". The staged scan runs after approval and staging but before the `git commit` command. No commit may execute until both the post-archive report and staged scan pass.
+After archive and before commit preparation, the post-archive CVE report and trend index must be generated, validated, and added to the intended commit file list. Mechanics in `task-workflow.md` under "Phase: cve-report". The staged scan runs after approval and staging but before the `git commit` command. No commit may execute until both the post-archive report and staged scan pass.
 
 ### 4.3 Commit grouping and message rules
 
@@ -175,7 +175,7 @@ Use the `commit` skill for message format:
 - Body paragraphs are single lines (no soft-wrap inside a phrase).
 - Stage only intended files; never `git add -A` or `git add .`.
 
-The commit preview format and approval flow live in `docs/task-workflow.md`. The orchestrator gate is: never execute `git commit` without an approved preview and a passing staged scan.
+The commit preview format and approval flow live in `task-workflow.md`. The orchestrator gate is: never execute `git commit` without an approved preview and a passing staged scan.
 
 ### 4.4 PR preview and creation
 
