@@ -15,5 +15,5 @@ uff/
 .env.*
 !.env.example
 .mcp*.json
-.obsidian/workspace.json.backup-*
-.obsidian/workspace.json.tmp
+.obsidian/
+mestrado-uff/
