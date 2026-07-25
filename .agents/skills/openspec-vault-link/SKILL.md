@@ -121,7 +121,7 @@ If both `<change-name>` and `--all` are omitted, run `openspec list --json` and 
    - **Active**: one line per active change folder, `- [[<name>/proposal|<name>]]`.
    - **Archived**: grouped by `### YYYY-MM`, one line per archive folder in that month. Sort months descending, entries within each month ascending.
    - **Specifications**: one line per capability folder under `./openspec/specs/`, `- [[<capability>/spec|<capability>]]`. Sorted alphabetically.
-    - **Project**: `- [[docs/README|Workspace Docs]]` and `- [[docs/obsidian|Obsidian and MCP Setup]]`. Keep these as the last two lines of the file (after Project heading).
+    - **Project**: `- [[../.agents/skills/README|Workspace Docs]]` and `- [[obsidian|Obsidian and MCP Setup]]`. Keep these as the last two lines of the file (after Project heading).
    - Idempotency: skip an entry if its exact wikilink already appears under the right heading.
 
 8. **Output summary**
@@ -156,7 +156,7 @@ tags:
 
 # OpenSpec Index
 
-Single MOC for the OpenSpec folder in this vault. For workspace conventions and setup, see [[docs/README|Workspace Docs]].
+Single MOC for the OpenSpec folder in this vault. For workspace conventions and setup, see [[../.agents/skills/README|Workspace Docs]].
 
 ## Active
 
@@ -172,8 +172,8 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 
 ## Project
 
-- [[docs/README|Workspace Docs]]
-- [[docs/obsidian|Obsidian and MCP Setup]]
+- [[../.agents/skills/README|Workspace Docs]]
+- [[obsidian|Obsidian and MCP Setup]]
 ```
 
 **Guardrails**

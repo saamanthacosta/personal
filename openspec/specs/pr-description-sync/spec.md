@@ -12,7 +12,7 @@ The `update-pr-description` skill SHALL recompute the body of an open Pull Reque
 - **THEN** the PR title is left untouched unless the user explicitly passes a `--title` flag
 
 ### Requirement: Template parity with `create-pr`
-The regenerated body SHALL follow the same section structure and formatting rules that `create-pr` enforces, as documented in `docs/pr-style.md`, so a regenerated body is byte-shape identical to one produced at PR open.
+The regenerated body SHALL follow the same section structure and formatting rules that `create-pr` enforces, as documented in `.agents/skills/create-pr/pr-style.md`, so a regenerated body is byte-shape identical to one produced at PR open.
 
 #### Scenario: Section ordering and headings match create-pr
 - **WHEN** the skill writes the proposed body
@@ -64,14 +64,14 @@ The skill SHALL rely only on `git`, `gh`, and POSIX utilities. It SHALL NOT add 
 - **THEN** the temp files under `/tmp/pr-update-body-<pr>.md` and `/tmp/pr-update-current-<pr>.md` are removed
 
 ### Requirement: Library inventory registration
-The root `.agents/skills/` library SHALL contain `update-pr-description` with valid frontmatter and a unique name, and `docs/skills-folder.md` SHALL list it under the `Personal/.agents/skills/` block alongside the other PR-category skills.
+The root `.agents/skills/` library SHALL contain `update-pr-description` with valid frontmatter and a unique name, and `.agents/skills/README.md` SHALL list it under the `Personal/.agents/skills/` block alongside the other PR-category skills.
 
 #### Scenario: update-pr-description skill is present
 - **WHEN** the library inventory enumerates `.agents/skills/`
 - **THEN** `.agents/skills/update-pr-description/SKILL.md` exists with valid frontmatter and a unique name
 
 #### Scenario: skills-folder layout lists the new skill
-- **WHEN** `docs/skills-folder.md` is read
+- **WHEN** `.agents/skills/README.md` is read
 - **THEN** the `Personal/.agents/skills/` block includes `update-pr-description` in its listing
 
 ## History
