@@ -6,7 +6,7 @@ tags:
 # task-orchestration Specification
 
 ## Purpose
-TBD - created by archiving change create-task-workflow. Update Purpose after archive.
+The workspace provides a `create-task` skill that orchestrates end-to-end delivery of feature, fix, refactor, chore, docs, test, and perf changes from natural-language description to merged pull request. The orchestrator retains lifecycle ownership across specialist phases, resumes from the earliest incomplete phase, and never surrenders authority to a specialist.
 ## Requirements
 ### Requirement: A single skill orchestrates implementation tasks
 The workspace SHALL provide a `create-task` skill that accepts a natural-language task, classifies its type, derives a kebab-case slug, and drives a resumable workflow for features, fixes, refactors, chores, documentation, tests, and performance work. When the user explicitly invokes `create-task`, it SHALL retain ownership of the lifecycle until completion or an explicit pause, even when the task subject matches a specialist skill.
@@ -49,7 +49,19 @@ When `create-task` uses another skill's methodology, the specialist phase MUST r
 - **WHEN** a specialist methodology reaches a material ambiguity inside an active `create-task` workflow
 - **THEN** the workflow pauses for that clarification while preserving `create-task` as the owner and resumes from the same phase afterward
 
+### Requirement: Workflow describes the lifecycle span
+The `create-task` skill's documented Purpose SHALL describe the full lifecycle span from natural-language description to merged pull request, covering feature, fix, refactor, chore, docs, test, and perf changes.
+
+#### Scenario: Purpose specifies the full lifecycle span
+- **WHEN** a reader reaches the `task-orchestration` spec's `## Purpose` section
+- **THEN** the Purpose text names the lifecycle span from natural-language description to merged pull request
+
+#### Scenario: Purpose names the orchestrator ownership rule
+- **WHEN** a reader reaches the `task-orchestration` spec's `## Purpose` section
+- **THEN** the Purpose text states that the orchestrator retains lifecycle ownership and never surrenders authority to a specialist
+
 ## History
 
 - [[../../changes/archive/2026-07-24-create-task-workflow/proposal|create-task-workflow (2026-07-24)]] — Implementation work currently depends on manually remembering several separate OpenSpec, Git, security, and PR steps.
+- [[../../changes/archive/2026-07-25-slim-create-task-mechanics/proposal|slim-create-task-mechanics (2026-07-25)]] — Extract per-phase mechanics from create-task to docs/task-workflow.md; replace §4.1 inline CVE prompts with a pointer to docs/cve-methodology.md.
 

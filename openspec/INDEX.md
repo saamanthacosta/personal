@@ -17,6 +17,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[changes/archive/2026-07-25-add-create-skill/proposal|add-create-skill]]
 - [[changes/archive/2026-07-25-fix-create-task-skill-handoff/proposal|fix-create-task-skill-handoff]]
 - [[changes/archive/2026-07-25-pr-review-comment-skills/proposal|pr-review-comment-skills]]
+- [[changes/archive/2026-07-25-slim-create-task-mechanics/proposal|slim-create-task-mechanics]]
 - [[changes/archive/2026-07-25-workspace-vault-migration/proposal|workspace-vault-migration]]
 
 ## Specifications
