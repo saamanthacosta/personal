@@ -20,6 +20,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[changes/archive/2026-07-25-improve-vault-link/proposal|improve-vault-link]]
 - [[changes/archive/2026-07-25-pr-review-comment-skills/proposal|pr-review-comment-skills]]
 - [[changes/archive/2026-07-25-relocate-skill-docs/proposal|relocate-skill-docs]]
+- [[changes/archive/2026-07-25-scaffold-github-rules-as-code/proposal|scaffold-github-rules-as-code]]
 - [[changes/archive/2026-07-25-slim-create-task-mechanics/proposal|slim-create-task-mechanics]]
 - [[changes/archive/2026-07-25-workspace-vault-migration/proposal|workspace-vault-migration]]
 
@@ -27,6 +28,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 
 - [[agent-skill-library/spec|agent-skill-library]]
 - [[branch-preflight/spec|branch-preflight]]
+- [[github-rules-as-code-runner/spec|github-rules-as-code-runner]]
 - [[obsidian-vault-integration/spec|obsidian-vault-integration]]
 - [[pr-description-sync/spec|pr-description-sync]]
 - [[pr-review-workflow/spec|pr-review-workflow]]
