@@ -126,7 +126,9 @@ Keep the reply on a single line. No subject lines, no code-block fences, no extr
 
 ### 5.3 Post the reply
 
-For each `comment_id` in the mapping, write the JSON payload to a temp file and use `gh api --input`:
+For each `comment_id` in the mapping, first check the `has_replied` map from step 7.1: if the current user has already posted a comment in the same thread, skip the reply (the previous run already covered it). The current user is `gh api user --jq .login`.
+
+For the remaining comments, write the JSON payload to a temp file and use `gh api --input`:
 
 ```bash
 gh api \
@@ -154,9 +156,7 @@ After all replies are posted, surface a push plan and require explicit user appr
 BRANCH=$(git branch --show-current)
 UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
 REMOTE="${UPSTREAM%%/*}"
-FIXUP_COUNT=$(git log --merges --first-parent --pretty=format:'%H' "$MERGE_BASE..HEAD" \
-  | xargs -I{} git log --pretty=format:'%H %s' -1 {} \
-  | grep -c '^fixup! ' || echo 0)
+FIXUP_COUNT=$(git log --pretty=format:'%s' "$MERGE_BASE..HEAD" | grep -c '^fixup! ')
 ```
 
 Print the plan verbatim:
@@ -215,7 +215,11 @@ gh api graphql \
           id
           isResolved
           comments(first: 100) {
-            nodes { databaseId }
+            nodes {
+              databaseId
+              body
+              author { login }
+            }
           }
         }
       }
@@ -223,11 +227,16 @@ gh api graphql \
   }
 }' \
   --jq '.data.repository.pullRequest.reviewThreads.nodes
-        | map({id, isResolved, ids: (.comments.nodes | map(.databaseId))})
-        | map(select(.ids | length > 0))'
+        | map({id, isResolved, comments: .comments.nodes})
+        | map(select(.comments | length > 0))'
 ```
 
-Build a map: `comment_id → {thread_id, already_resolved}`.
+Build two maps from the same query:
+
+- `comment_id → {thread_id, already_resolved}` — used by step 7.2 to skip threads that are already resolved.
+- `thread_id → has_replied` — true when any comment on the thread has `author.login == $CURRENT_USER`. Used by step 5.3 to skip posting a reply that the current user has already posted on a re-run.
+
+`first: 100` on both `reviewThreads` and `comments` is a documented cap. PRs with more than 100 threads or threads with more than 100 comments are not currently supported; raise the cap or follow `pageInfo.hasNextPage` with `endCursor` if you hit it.
 
 ### 7.2 Resolve each thread
 
@@ -302,5 +311,5 @@ If the skill is run a second time on the same PR:
 
 - Comments addressed in the previous run will still appear in the API. Detect this by checking whether a `fixup! <sha>` commit already exists; if so, skip that commit (its findings are already addressed in the fixup).
 - New comments posted after the previous run will be picked up and produce new fixups against the same original `<sha>`. The final autosquash collapses them all.
-- Threads already resolved in a previous run are skipped in step 7.2 (`already_resolved == true`); the reply is still posted if it has not been posted before, idempotent against the GitHub reply thread.
+- Threads already resolved in a previous run are skipped in step 7.2 (`already_resolved == true`); replies posted by the current user in a previous run are skipped in step 5.3 via the `has_replied` map from step 7.1, so a re-run does not duplicate the reply.
 - Never try to "unfix" or revert an existing fixup — that is the user's call, with `git rebase -i`.
