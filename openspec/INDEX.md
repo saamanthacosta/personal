@@ -23,6 +23,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[changes/archive/2026-07-25-scaffold-github-rules-as-code/proposal|scaffold-github-rules-as-code]]
 - [[changes/archive/2026-07-25-slim-create-task-mechanics/proposal|slim-create-task-mechanics]]
 - [[changes/archive/2026-07-25-workspace-vault-migration/proposal|workspace-vault-migration]]
+- [[changes/archive/2026-07-26-dedupe-cve-audit/proposal|dedupe-cve-audit]]
 
 ## Specifications
 
