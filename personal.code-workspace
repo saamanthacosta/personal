@@ -15,6 +15,10 @@
     {
       "name": "mestrado-uff",
       "path": "mestrado-uff"
+    },
+    {
+      "name": "github-rules-as-code",
+      "path": "github-rules-as-code"
     }
   ],
   "settings": {
