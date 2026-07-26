@@ -87,7 +87,7 @@ OpenSpec phases are prompts, not executable subroutines. Apply their rules inlin
 
 - **explore** → apply `openspec-explore` rules, including the CVE threat-model prompts from §3.1.
 - **propose** → apply `openspec-propose` rules, including proposal/design security validation from §3.2.
-- **apply** → apply `openspec-apply-change` rules, including the full audit from §3.4. When the task subject matches a specialist skill, load and apply that skill as bounded phase guidance. Require a visible `## Specialist Phase: <name> — done` boundary, then continue with the next incomplete `create-task` phase. Never let a specialist completion summary replace verify, archive, security, commit, push, or PR delivery.
+- **apply** → apply `openspec-apply-change` rules. When the task subject matches a specialist skill, load and apply that skill as bounded phase guidance. Require a visible `## Specialist Phase: <name> — done` boundary, then continue with the next incomplete `create-task` phase. Never let a specialist completion summary replace verify, archive, security, commit, push, or PR delivery. (The full CVE audit does NOT run in the apply phase; §3.4 invokes it exactly once, at the post-archive gate.)
 - **verify** → run the repository and implementation checks defined in `task-workflow.md` under "Phase: verify".
 - **archive** → after verification passes, synchronously apply all delta specs and archive with `openspec-archive-change`, then perform best-effort `openspec-vault-link` wiring. Sync and archive must complete before CVE reports. Mechanics in `task-workflow.md` under "Phase: archive".
 - **cve-report** → after archive, generate the final full-audit report and trend index defined in §3.4 mechanics. The staged scan runs after staging but before `git commit`; all security gates must pass before the commit executes.
@@ -139,15 +139,13 @@ The `verify` phase runs before archive and covers non-CVE correctness checks. Me
 
 Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory post-archive `cve-report` phase.
 
-### 3.4 Apply + post-archive CVE reports (interface)
+### 3.4 Post-archive CVE report (interface)
 
 The orchestrator's interface to the cve-scan skill:
 
-- **Apply boundary:** run the generalized full audit:
-  `node .agents/skills/cve-scan/bin/full-audit.mjs --change <name> --phase=apply`. CRITICAL or unoverridden HIGH findings block the affected task.
 - **Post-archive report:** after sync and archive, run:
   `node .agents/skills/cve-scan/bin/full-audit.mjs --change <archive-path> --phase=pre-commit --scope=<name>`.
-  This must write the final report under `docs/cve-reports/` and cover the archived proposal plus the complete working tree.
+  This is the **only** full-audit invocation per change — the apply boundary no longer runs a full audit because the apply-phase scan and the post-archive scan produced identical content, and the orchestrator's own §3.3 names the post-archive gate as the final, authoritative CVE gate. The report must cover the archived proposal plus the complete working tree.
 - Run `node .agents/skills/cve-scan/bin/format-report.mjs` to regenerate the CVE trend index after the final report is written.
 - **Commit boundary:** after commit approval, stage only intended files, including the archive, synchronized specs, CVE reports, and trend index. Run `node .agents/skills/cve-scan/bin/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`.
 
