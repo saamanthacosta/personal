@@ -107,7 +107,7 @@ The `verify` phase runs before archive and covers non-CVE correctness checks.
 - Validate task-specific acceptance criteria and regression coverage.
 - Record every command, exit status, output summary, and blocking result.
 
-Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory post-archive `cve-report` phase.
+Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory pre-archive `cve-report` phase (see "Phase: cve-report" below).
 
 ### Repository verification discovery
 
@@ -132,6 +132,47 @@ For each check, record:
 
 Required pre-archive checks: lint, typecheck, and test; build when applicable. Non-zero exits block delivery. A missing repository command may proceed only after explicit user acknowledgement. Post-archive CVE reporting and the staged scan are mandatory and cannot be skipped or replaced by acknowledgement.
 
+## Phase: pre-commit-review
+
+The `pre-commit-review` phase runs after `verify` and before the pre-archive `cve-report`. It applies the three-class taxonomy in `BLOCKER-CHECKLIST.md`. Apply only after `verify` has passed.
+
+### Phasing
+
+1. Re-read the active change's `proposal.md` and `design.md` against the current working tree.
+2. Walk `BLOCKER-CHECKLIST.md` once per category:
+   - **Blocker** candidates: scope creep, contract drift vs spec, swallow-and-continue, missing migration, broken build, untested failure path.
+   - **Polish** candidates: lint nits, docstrings, cosmetic TODOs.
+   - **Out-of-scope** candidates: feature creep beyond proposal, unrelated refactor, new dependency with no justification.
+3. For each finding, label and decide.
+
+### Output and narration
+
+- **Blocker** → narrate `looping back to <phase> — <one-line reason citing the blocker class and concrete finding>` inside the phase output block. The narration must name the artifact (file:line where relevant).
+- **Polish** → note in the phase output block (`polish: <one-line>`) for inclusion in the PR body later.
+- **Out-of-scope** → stop and ask the user to propose a new OpenSpec change for the finding before continuing.
+
+### Loop-back routing
+
+- Propose-loop when the finding requires editing `design.md` or `specs/<cap>/spec.md` (heuristic from `BLOCKER-CHECKLIST.md`).
+- Apply-loop otherwise.
+- Surface a `question` if the target is ambiguous.
+
+### Skip and dismiss
+
+- Skip at run time: prompt `"skip pre-commit-review for this change? [y/N] — reason: ____"`.
+- Override a loop-back: `"proceed anyway — reason: ____"` after the narration is shown.
+- Both options require a reason; the reason is recorded in the PR body as `Review gate: skipped (reason)` or `Review gate: dismissed by user (reason)`.
+
+### Skip-on-blocker for cve-report
+
+If the gate classifies a blocker in this pass, the workflow does NOT run the pre-archive `cve-report` — the loop-back invalidates the diff anyway. The post-fix pass runs both gates in order.
+
+### What the gate does NOT do
+
+- Re-run tests, lint, typecheck, build (those are `verify`'s job).
+- Re-run coverage tools (verify emits the coverage report when tooling exists; the gate reads it).
+- Re-check security/dependency hygiene (that's `cve-report`'s job).
+
 ## Phase: archive
 
 After implementation and all repository verification checks pass:
@@ -146,16 +187,20 @@ An archive or synchronization failure blocks the CVE-report and commit phases. V
 
 ## Phase: cve-report
 
-After archive and before commit preparation:
+The pre-archive `cve-report` runs after `pre-commit-review` and before archive. It runs ONLY if `pre-commit-review` did not produce a blocker on this pass — otherwise the workflow loops back first (see `Phase: pre-commit-review` / Skip-on-blocker).
 
-1. Generate the post-archive full-audit report and trend index:
+1. Generate the pre-archive full-audit report and trend index:
    ```bash
-   node .agents/skills/cve-scan/bin/full-audit.mjs --change <archive-path> --phase=pre-commit --scope=<name>
+   node .agents/skills/cve-scan/bin/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>
    node .agents/skills/cve-scan/bin/format-report.mjs
    ```
-2. Verify the report names the archived change scope and has no blocking findings. The report must write under `docs/cve-reports/` and cover the archived proposal plus the complete working tree.
-3. Add all generated report and index paths to the intended commit file list.
-4. Stop on missing, stale, malformed, or blocking reports.
+   Notes:
+   - `--phase=pre-archive` replaces the previous `--phase=pre-commit`. The flag value is descriptive of when in the lifecycle the audit runs.
+   - `--change=<change-path>` references the active OpenSpec change directory before archive. After archive, the path is `openspec/changes/archive/YYYY-MM-DD-<name>/`.
+2. Verify the report names the change scope, covers the active change directory plus the complete working tree, and has no blocking findings. The report must write under `docs/cve-reports/`.
+3. If the report surfaces a CRITICAL or unoverridden HIGH finding, loop back to `apply` (or `propose` if the finding requires design or spec edits). Do not proceed to archive.
+4. Add all generated report and index paths to the intended commit file list.
+5. Stop on missing, stale, malformed, or blocking reports.
 
 The staged scan runs after approval and staging but before the `git commit` command:
 
@@ -176,7 +221,7 @@ Immediately before opening a PR:
 3. The latest commit must be the task's intended commit (`git log -1 --stat`).
 4. All required checks must be green; CRITICAL/HIGH findings must be resolved or explicitly overridden.
 5. The archived OpenSpec path must be present in the intended commit and the corresponding active change must be absent.
-6. The final post-archive CVE report, trend index, and staged scan must be current, included in the intended commit where applicable, and free of blockers.
+6. The final pre-archive CVE report, trend index, and staged scan must be current, included in the intended commit where applicable, and free of blockers.
 
 Stop and report if any of these fail.
 
@@ -284,7 +329,7 @@ The PR must include the archived OpenSpec change; if archive completion cannot b
 | test       | <cmd>             | pass   |                      |
 | build      | <cmd>             | skip   | not applicable       |
 
-## CVE Reports — Post-Archive
+## CVE Reports — Pre-Archive
 | Check       | Report/Command    | Status | Notes                |
 | ----------- | ----------------- | ------ | -------------------- |
 | full audit  | <report path>     | pass   | archived scope       |
