@@ -137,7 +137,7 @@ Missing section → blocking finding; pause and ask for the section or an explic
 
 The `verify` phase runs before archive and covers non-CVE correctness checks. Mechanics for scope, repository verification discovery, and result handling live in `task-workflow.md` under "Phase: verify". This rule is the policy: do not advance to archive until every required check is recorded with exit status and blocking decision.
 
-Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory post-archive `cve-report` phase.
+Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory pre-archive `cve-report` phase (see §3.5).
 
 ### 3.4 Pre-commit-review gate (interface)
 
@@ -179,9 +179,9 @@ The pre-PR gate confirms the **pre-archive** report (not a post-archive one) exi
 
 Do not prepare or stage a commit until §2.3 is complete. Mechanics for the archive confirmations live in `task-workflow.md`.
 
-### 4.2 CVE-report gate
+### 4.2 Staged-scan gate
 
-After archive and before commit preparation, the post-archive CVE report and trend index must be generated, validated, and added to the intended commit file list. Mechanics in `task-workflow.md` under "Phase: cve-report". The staged scan runs after approval and staging but before the `git commit` command. No commit may execute until both the post-archive report and staged scan pass.
+The pre-archive CVE report (§3.5) is produced before archive. Once the change is archived and intended commit files are staged, the staged-pattern scan is the commit-boundary gate: run `node .agents/skills/cve-scan/bin/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`. Mechanics in `task-workflow.md` under "Phase: cve-report". No commit may execute until the staged scan passes.
 
 ### 4.3 Commit grouping and message rules
 

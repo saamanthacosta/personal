@@ -107,7 +107,7 @@ The `verify` phase runs before archive and covers non-CVE correctness checks.
 - Validate task-specific acceptance criteria and regression coverage.
 - Record every command, exit status, output summary, and blocking result.
 
-Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory post-archive `cve-report` phase.
+Verification does not produce the final CVE reports because archive and spec sync change the working tree. Final security reporting therefore runs in the mandatory pre-archive `cve-report` phase (see "Phase: cve-report" below).
 
 ### Repository verification discovery
 
