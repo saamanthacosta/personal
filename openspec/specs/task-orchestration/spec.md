@@ -28,11 +28,11 @@ The workspace SHALL provide a `create-task` skill that accepts a natural-languag
 - **THEN** `create-task` retains lifecycle ownership and treats skill-authoring guidance as a bounded phase rather than ending the task after authoring
 
 ### Requirement: Workflow progress is resumable
-The workflow SHALL inspect OpenSpec artifacts, task status, Git state, and prior phase results before starting a phase, and SHALL resume from the earliest incomplete phase without repeating completed destructive actions.
+The workflow SHALL inspect OpenSpec artifacts, task status, Git state, prior phase results, and any existing session log under `docs/skill-sessions/` before starting a phase, and SHALL resume from the earliest incomplete phase without repeating completed destructive actions.
 
 #### Scenario: Apply resumes an existing change
 - **WHEN** an active OpenSpec change has completed proposal artifacts and partially completed tasks
-- **THEN** the workflow skips completed proposal work and resumes the remaining apply tasks after preflight validation
+- **THEN** the workflow skips completed proposal work and resumes the remaining apply tasks after preflight validation, and continues writing to the existing session log
 
 #### Scenario: Completed delivery is not repeated
 - **WHEN** the current branch already has an upstream and an existing PR
