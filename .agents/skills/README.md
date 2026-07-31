@@ -29,6 +29,7 @@ Personal/.agents/skills/
   openspec-explore/
   openspec-propose/
   openspec-vault-link/
+  skill-sessions/
   update-pr-description/
 
 Personal/lazyFinances/.agents/skills/

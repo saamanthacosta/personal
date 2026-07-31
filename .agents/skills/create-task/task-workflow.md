@@ -313,6 +313,24 @@ The PR must include the archived OpenSpec change; if archive completion cannot b
 - Next: explore
 ```
 
+### Skill timeline (chat block)
+
+Every phase output SHALL be preceded by a `## Skill timeline` block produced by `.agents/skills/skill-sessions/bin/render.mjs`. The block is fed by the shared JSONL event stream and is the same source that populates `docs/skill-sessions/<id>.md`.
+
+```
+## Skill timeline
+🚀 Skill session · <session-id>
+
+- ✅ complete    1/11 preflight (0.4s)
+- 🔄 running    3/11 apply
+- 🧩 Specialist: openspec-apply-change (implementation phase)
+- 💡 src/foo.ts — passed
+
+### Summary · 2 complete · 1 active · 8 pending · 0 failed
+```
+
+Status icons are paired with text (`complete`, `running`, `pending`, `failed`, `loop-back`) so the block stays readable when emojis are stripped. Evidence rows larger than 1 KiB are truncated and point to the source file.
+
 ### Specialist phase and verification output
 
 ```
