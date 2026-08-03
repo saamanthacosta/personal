@@ -1,6 +1,6 @@
 # Pre-Commit-Review Blocker Checklist
 
-> Decision-support artifact for the `pre-commit-review` gate in `create-task`. Source of truth for the three-class taxonomy, the loop-back routing heuristic, and the skip / dismissal reason templates. The orchestrator (`create-task/SKILL.md` §3.4 and `task-workflow.md` / `Phase: pre-commit-review`) owns the contract; this file owns the decision detail.
+> Decision-support artifact for the `pre-commit-review` gate in `create-task`. Source of truth for the three-class taxonomy, the loop-back routing heuristic, and the skip / dismissal reason templates. The orchestrator (`SKILL.md` §3.4 and `task-workflow.md` / `Phase: pre-commit-review` — both in the same directory as this file) owns the contract; this file owns the decision detail.
 
 ## How to use this checklist
 
@@ -141,6 +141,6 @@ The narration lives in the phase output block, not as a separate prompt — the 
 
 ## Companion references
 
-- `create-task/SKILL.md` §3.4 — gate contract
-- `create-task/task-workflow.md` / `Phase: pre-commit-review` — phasing and output mechanics
+- `SKILL.md` §3.4 — gate contract
+- `references/task-workflow.md` / `Phase: pre-commit-review` — phasing and output mechanics
 - `BACKLOG.md` (Personal) — Decision 3 records the loop-back heuristic rationale

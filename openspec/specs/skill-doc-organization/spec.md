@@ -5,7 +5,7 @@ Each skill's backing documentation SHALL live in the same folder as the skill's 
 
 #### Scenario: Skill doc lives next to SKILL.md
 - **WHEN** a skill such as `create-task` references a doc such as `task-workflow.md`
-- **THEN** the doc is found at `.agents/skills/create-task/task-workflow.md`, not under `docs/`
+- **THEN** the doc is found at `.agents/skills/create-task/references/task-workflow.md`, not under `docs/`
 
 #### Scenario: Skill doc reference is relative
 - **WHEN** a skill `SKILL.md` mentions its backing doc
