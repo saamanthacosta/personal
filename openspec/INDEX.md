@@ -27,9 +27,11 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[changes/archive/2026-07-26-dedupe-cve-audit/proposal|dedupe-cve-audit]]
 - [[changes/archive/2026-07-26-fix-pr-review-comments-resolve-push/proposal|fix-pr-review-comments-resolve-push]]
 - [[changes/archive/2026-07-28-add-pre-archive-gates/proposal|add-pre-archive-gates]]
+- [[changes/archive/2026-08-03-add-agents-md/proposal|add-agents-md]]
 
 ## Specifications
 
+- [[agent-instructions/spec|agent-instructions]]
 - [[agent-skill-library/spec|agent-skill-library]]
 - [[branch-preflight/spec|branch-preflight]]
 - [[github-rules-as-code-runner/spec|github-rules-as-code-runner]]
