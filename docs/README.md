@@ -7,7 +7,7 @@ Workspace-level notes, conventions, and rules for the `Personal/` repository. Sk
 - `workspace.md` — rules for `personal.code-workspace` and how new git projects are added at the root.
 - `cve-reports/` — generated security scan reports and the trend dashboard.
 - Skill-level docs and helper scripts (see `.agents/skills/README.md` for the library layout and naming rules):
-  - `../.agents/skills/create-task/task-workflow.md`
+  - `../.agents/skills/create-task/references/task-workflow.md`
   - `../.agents/skills/create-pr/pr-style.md`
   - `../.agents/skills/commit/commit-style.md`
   - `../.agents/skills/cve-scan/cve-methodology.md`

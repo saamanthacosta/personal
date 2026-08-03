@@ -134,7 +134,7 @@ Required pre-archive checks: lint, typecheck, and test; build when applicable. N
 
 ## Phase: pre-commit-review
 
-The `pre-commit-review` phase runs after `verify` and before the pre-archive `cve-report`. It applies the three-class taxonomy in `BLOCKER-CHECKLIST.md`. Apply only after `verify` has passed.
+The `pre-commit-review` phase runs after `verify` and before the pre-archive `cve-report`. It applies the three-class taxonomy in `BLOCKER-CHECKLIST.md` (same directory). Apply only after `verify` has passed.
 
 ### Phasing
 
@@ -153,7 +153,7 @@ The `pre-commit-review` phase runs after `verify` and before the pre-archive `cv
 
 ### Loop-back routing
 
-- Propose-loop when the finding requires editing `design.md` or `specs/<cap>/spec.md` (heuristic from `BLOCKER-CHECKLIST.md`).
+- Propose-loop when the finding requires editing `design.md` or `specs/<cap>/spec.md` (heuristic from `BLOCKER-CHECKLIST.md` in the same directory).
 - Apply-loop otherwise.
 - Surface a `question` if the target is ambiguous.
 
