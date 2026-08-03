@@ -1,6 +1,6 @@
 # Skills Folder
 
-Rule for where skill definitions live across this workspace.
+Rule for where skill definitions live across this workspace. Workspace-level rules that any compatible agent MUST follow live in `AGENTS.md` at the repository root.
 
 ## Rule
 
