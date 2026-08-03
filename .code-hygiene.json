@@ -1,0 +1,26 @@
+{
+  "report": "docs/code-hygiene.md",
+  "exclude": [
+    "**/.app/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/.agents/skills/cve-scan/patterns/**",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/pnpm-lock.yaml"
+  ],
+  "patterns": {
+    "debug.console-log": { "severity": "warn" },
+    "debug.console-warn-error": { "severity": "info" },
+    "debug.breakpoint": { "severity": "blocker" },
+    "debug.python-pdb": { "severity": "blocker" },
+    "debug.php-dd": { "severity": "warn" },
+    "todo.marker": { "severity": "info" },
+    "catch.empty": { "severity": "warn" },
+    "catch.silent": { "severity": "info" }
+  }
+}

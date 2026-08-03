@@ -1,0 +1,60 @@
+{
+  "$schema": "https://agentskills.io/evals.schema.json",
+  "version": "0.1",
+  "cases": [
+    {
+      "id": "trigger.hygiene-scan",
+      "category": "should-trigger",
+      "prompt": "scan this repo for console.log statements and TODO markers",
+      "expected_output": "skill loads, runs scan.mjs --check, prints findings"
+    },
+    {
+      "id": "trigger.bootstrap-report",
+      "category": "should-trigger",
+      "prompt": "create the docs/code-hygiene.md report file",
+      "expected_output": "skill loads, runs scan.mjs --bootstrap, report exists with empty Findings section"
+    },
+    {
+      "id": "trigger.apply-findings",
+      "category": "should-trigger",
+      "prompt": "add the new console.log findings to the code hygiene report",
+      "expected_output": "skill loads, runs scan.mjs --apply, report updated"
+    },
+    {
+      "id": "near-miss.security-scan",
+      "category": "should-not-trigger",
+      "prompt": "scan this repo for leaked API keys in git history",
+      "expected_output": "skill does NOT load; cve-scan is the right tool"
+    },
+    {
+      "id": "near-miss.ast-analysis",
+      "category": "should-not-trigger",
+      "prompt": "find unused exports across the codebase",
+      "expected_output": "skill does NOT load; AST tooling required, deferred from v1"
+    },
+    {
+      "id": "near-miss.duplication",
+      "category": "should-not-trigger",
+      "prompt": "detect duplicated functions in src/",
+      "expected_output": "skill does NOT load; deduplication tools false-positive on generated code"
+    },
+    {
+      "id": "output.exit-codes",
+      "category": "expected-output",
+      "prompt": "node .agents/skills/code-hygiene/bin/scan.mjs --check",
+      "expected_output": "exit 0 (no new findings) or exit 1 (new findings), never exit 2 on a clean repo"
+    },
+    {
+      "id": "output.dedup-idempotent",
+      "category": "expected-output",
+      "prompt": "node .agents/skills/code-hygiene/bin/scan.mjs --check twice in a row",
+      "expected_output": "first run may exit 1, second run exits 0 (dedup hit)"
+    },
+    {
+      "id": "output.json-shape",
+      "category": "expected-output",
+      "prompt": "node .agents/skills/code-hygiene/bin/scan.mjs --json",
+      "expected_output": "JSON object with keys: mode, report_path, patterns_run, files_scanned, new, stale, gate_findings"
+    }
+  ]
+}
