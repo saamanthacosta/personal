@@ -19,6 +19,7 @@ Both surfaces consume the same JSONL event stream defined in `SCHEMA.md` (and va
 
 ## When to load
 
+- Whenever a phase-based skill runs (`create-task`, `create-skill`, `research-spike`, or any skill that emits `## Phase: <name> — done` boundaries). The repo-level `AGENTS.md` declares this loader authoritative; do not rely on the skill `description` to trigger the load.
 - Inside `create-task/SKILL.md` "Phase output" boundaries (`preflight`, `explore`, `apply`, `verify`, `pre-commit-review`, `cve-report`, `archive`, `commit`, `push`, `pr`).
 - Inside any `## Specialist Phase: <name> — done` boundary.
 - Inside `openspec-apply-change/SKILL.md` per-task live progress lines.
