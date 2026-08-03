@@ -163,9 +163,9 @@ The `pre-commit-review` phase runs after `verify` and before the pre-archive `cv
 - Override a loop-back: `"proceed anyway — reason: ____"` after the narration is shown.
 - Both options require a reason; the reason is recorded in the PR body as `Review gate: skipped (reason)` or `Review gate: dismissed by user (reason)`.
 
-### Skip-on-blocker for cve-report
+### Skip-on-blocker for cve-report and code-hygiene gate
 
-If the gate classifies a blocker in this pass, the workflow does NOT run the pre-archive `cve-report` — the loop-back invalidates the diff anyway. The post-fix pass runs both gates in order.
+If the gate classifies a blocker in this pass, the workflow does NOT run the pre-archive `cve-report` or the `code-hygiene` gate — the loop-back invalidates the diff anyway. The post-fix pass runs all gates in order.
 
 ### What the gate does NOT do
 
@@ -184,6 +184,39 @@ After implementation and all repository verification checks pass:
 5. Include the archived artifacts, canonical spec updates, vault links, and index changes among the intended files in the commit preview.
 
 An archive or synchronization failure blocks the CVE-report and commit phases. Vault-link failure does not undo a successful archive, but it must be reported in verification notes. Proceed next to `cve-report`, never directly to commit.
+
+## Phase: code-hygiene
+
+The `code-hygiene` phase runs after `pre-commit-review` produces no blocker and before the pre-archive `cve-report`. It surfaces new hygiene findings (debug leftovers, TODO markers, empty catch blocks) without mutating `docs/code-hygiene.md`. Skip-on-blocker semantics match the pre-archive `cve-report` — if `pre-commit-review` classified a blocker on this pass, the gate does not run.
+
+1. Run the scanner in read-only mode:
+   ```bash
+   node .agents/skills/code-hygiene/bin/scan.mjs --check
+   ```
+   Notes:
+   - `--check` is the default; it reads tracked files via `git ls-files`, computes dedup keys, and prints new findings to stdout. It does NOT mutate `docs/code-hygiene.md`.
+   - The runner exits `0` when no new findings, `1` when new findings exist, `2` on scanner error. The default severity is `info`, which is non-blocking — the orchestrator records the findings in verification notes and proceeds.
+   - Operators can escalate severity per-run via `--severity <tier>` (info | warn | blocker). `blocker` exits 2 and surfaces as a hard gate; the orchestrator pauses and asks before proceeding.
+2. If the runner exits 1 (new findings exist at default severity), record the new findings in the verification notes as `code-hygiene: <N> new finding(s)`. The operator can:
+   - **Continue** — proceed to `cve-report`; new findings remain in `docs/code-hygiene.md` only after the operator runs `--apply` manually.
+   - **Skip the gate** — confirm `skip code-hygiene gate` with a written reason; the reason lands in the PR body as `Code hygiene gate: skipped (reason)`.
+   - **Block** — only possible at `warn` or `blocker` severity (operator must have set `.code-hygiene.json` or passed `--severity=warn`).
+3. If the runner exits 2 (scanner error), pause and surface the error to the operator before proceeding.
+4. The operator MAY run `--apply` to append new findings to `docs/code-hygiene.md` and commit the report as part of this change. This is optional; the report is append-only across runs.
+
+The phase output mirrors `pre-commit-review`:
+
+```
+## Phase: code-hygiene — done
+- Mode: --check (read-only)
+- New findings: <N> (at severity >= info)
+- Files scanned: <M>
+- Patterns run: <P>
+- Report: docs/code-hygiene.md
+- Next: cve-report
+```
+
+Contract lives in `openspec/specs/task-quality-gates/spec.md`; runner implementation at `.agents/skills/code-hygiene/bin/scan.mjs`.
 
 ## Phase: cve-report
 

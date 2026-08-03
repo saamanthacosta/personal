@@ -77,7 +77,7 @@ Do not invent a separate state file. The orchestrator reads observable signals (
 The workflow is an 11-phase pipeline. Each phase emits a `## Phase: <name> — done` block before the next begins. Resume detection runs before any phase to skip completed work.
 
 ```
-preflight → explore → propose → apply → verify → pre-commit-review → cve-report → archive → commit → push → pr
+preflight → explore → propose → apply → verify → pre-commit-review → code-hygiene → cve-report → archive → commit → push → pr
 ```
 
 ```
@@ -88,12 +88,15 @@ Progress:
 - [ ] 4/11  apply               (implement tasks.md, may load specialist)
 - [ ] 5/11  verify              (lint, typecheck, test, build)
 - [ ] 6/11  pre-commit-review   (blocker taxonomy)
-- [ ] 7/11  cve-report          (pre-archive audit + staged scan)
-- [ ] 8/11  archive             (sync delta specs → archive + vault-link)
-- [ ] 9/11  commit              (preview + staged scan + git commit)
-- [ ] 10/11 push                (set upstream + verify)
-- [ ] 11/11 pr                  (create-pr preview + gh pr create)
+- [ ] 7/11  code-hygiene        (debug leftovers, TODOs, empty catches → docs/code-hygiene.md)
+- [ ] 8/11  cve-report          (pre-archive audit + staged scan)
+- [ ] 9/11  archive             (sync delta specs → archive + vault-link)
+- [ ] 10/11 commit              (preview + staged scan + git commit)
+- [ ] 11/11 push                (set upstream + verify)
+- [ ] 12/12 pr                  (create-pr preview + gh pr create)
 ```
+
+The `code-hygiene` phase runs after `pre-commit-review` produces no blocker, before the pre-archive `cve-report`. It invokes `node .agents/skills/code-hygiene/bin/scan.mjs --check` (read-only default) and records new findings in the verification notes without blocking the workflow at default `info` severity. Operators can escalate to `warn` or `blocker` via `.code-hygiene.json` or the `--severity` CLI flag, matching the contract in `openspec/specs/task-quality-gates/spec.md`. Skip-on-blocker semantics match the pre-archive `cve-report` (skipped when pre-commit-review blocks on this pass).
 
 ## 1. Orchestrator contract
 
@@ -231,7 +234,17 @@ The orchestrator's interface to the blocker-classification gate:
 - **Source of truth for the taxonomy and heuristic:** `references/BLOCKER-CHECKLIST.md` (decision-support artifact). This section owns the contract; the checklist owns the decision detail. Promote to a skill only if specialist sub-agents become useful.
 - **Verify is mechanical, the gate is judgment:** `verify` runs the tests/build/lint/types and emits a coverage report when tooling exists (§3.3). The gate reads those artifacts but SHALL NOT re-run coverage or other mechanical checks.
 
-### 3.5 Pre-archive CVE report (interface)
+### 3.5 Code hygiene gate (interface)
+
+The orchestrator invokes `node .agents/skills/code-hygiene/bin/scan.mjs --check` after `pre-commit-review` produces no blocker and before the pre-archive `cve-report`. The gate surfaces new findings (debug leftovers, TODO markers, empty catch blocks) without mutating `docs/code-hygiene.md`; operators run `--apply` to commit new findings after review.
+
+- **Default severity:** `info` (advisory, non-blocking). Operators can escalate to `warn` or `blocker` via `.code-hygiene.json` or `--severity <tier>`. Blocker severity exits 2.
+- **Skip-on-blocker:** if `pre-commit-review` classifies a blocker on this pass, the gate does NOT run (§3.4) — the loop-back invalidates the diff. The post-fix pass runs both gates in order.
+- **Skip at run time:** the operator can confirm `skip code-hygiene gate` with a written reason; the reason lands in the PR body as `Code hygiene gate: skipped (reason)`.
+- **Idempotency:** `--check` is read-only; new findings are reported to stdout without mutating `docs/code-hygiene.md`. Re-runs are deterministic on `sha1(pattern || path:line || snippet_norm)` dedup keys.
+- **Source of truth:** the contract lives in `openspec/specs/task-quality-gates/spec.md`; the runner implementation lives at `.agents/skills/code-hygiene/bin/scan.mjs`.
+
+### 3.6 Pre-archive CVE report (interface)
 
 The orchestrator's interface to the cve-scan skill:
 
@@ -245,7 +258,7 @@ The orchestrator's interface to the cve-scan skill:
 
 A missing final report, stale trend index, scanner error, CRITICAL finding, or unoverridden HIGH finding blocks the commit. When the cve-scan tooling is unavailable, apply the methodology fallback in `.agents/skills/cve-scan/SKILL.md` and surface missing coverage in the verification report.
 
-### 3.6 Pre-PR readiness rule
+### 3.7 Pre-PR readiness rule
 
 Immediately before opening a PR, the readiness checks must all pass. Mechanics (the specific commands and verification order) live in `references/task-workflow.md` under "Phase: pre-pr". This rule is the policy: any failure of a readiness check stops the workflow before PR creation.
 
@@ -284,12 +297,13 @@ These are facts the orchestrator will get wrong without being told. Highest-valu
 - **Specialist completion is NOT task completion.** A `## Specialist Phase: <name> — done` block is the specialist's exit signal to the orchestrator. The orchestrator must still run verify, pre-commit-review, cve-report, archive, commit, push, and pr.
 - **CVE tooling lives at `.agents/skills/cve-scan/bin/*.mjs`.** Don't search for it elsewhere; if a script is missing, fall back to the methodology in `.agents/skills/cve-scan/SKILL.md` and surface the gap in the verification report.
 - **`openspec list --json` after archive must NOT contain the change.** That is the gate that says archive succeeded. If the change is still listed, archive failed and you must not commit.
-- **Skip-on-blocker for cve-report.** If pre-commit-review classifies a blocker, the pre-archive cve-report does NOT run on that pass — the loop-back invalidates the diff. The post-fix pass runs both gates in order.
+- **Skip-on-blocker for cve-report and code-hygiene gate.** If pre-commit-review classifies a blocker, neither the pre-archive `cve-report` nor the `code-hygiene` gate runs on that pass — the loop-back invalidates the diff. The post-fix pass runs all gates in order.
 - **The branch-prefix table uses short forms** (`feat`, `fix`, `refactor`, ...) but task types are long (`feature`, `fix`, `refactor`, ...). `bin/slug-check.mjs` maps between them.
 - **PR must include the archived OpenSpec change.** If archive completion cannot be verified, stop before PR creation.
 - **Never use `git add -A` or `git add .`.** Stage only the intended files. The staged scan (§4.2) inspects the same files.
 - **`bin/phase-status.mjs` exits with code 4** when openspec or gh is missing. Partial snapshots are still emitted; the orchestrator treats that as degraded but not blocking for the phases that don't depend on the missing tool.
 - **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `create-skill` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
+- **The `code-hygiene` gate is non-blocking at default severity.** `info` exits 0; `warn` exits 1; `blocker` exits 2. The orchestrator records new findings in the verification notes and proceeds without looping back, matching the advisory-only intent of cleanup hygiene. Operators who want a hard gate escalate via `.code-hygiene.json`.
 
 ## 6. Available scripts
 
@@ -299,6 +313,7 @@ Run from the repository root. Each script supports `--help` for full usage.
 | ---------------------------- | -------------------------------------------------- | -------------------------------------------------------- |
 | `bin/phase-status.mjs`   | Snapshot git + openspec + gh state as JSON         | Before resume detection; before any destructive git op   |
 | `bin/slug-check.mjs`     | Validate type/slug/branch against §1.1–§1.2 rules  | After deriving a slug; before creating the branch        |
+| `../code-hygiene/bin/scan.mjs` | Greppable code-hygiene scanner (debug leftovers, TODOs, empty catches) | During `code-hygiene` phase (§3.5), invoked as `--check` (default) or `--apply` |
 
 Exit-code conventions:
 

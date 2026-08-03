@@ -11,7 +11,12 @@
     "**/.agents/skills/cve-scan/patterns/**",
     "**/package-lock.json",
     "**/yarn.lock",
-    "**/pnpm-lock.yaml"
+    "**/pnpm-lock.yaml",
+    "openspec/changes/archive/**/*.md",
+    ".agents/skills/code-hygiene/patterns.json",
+    ".agents/skills/code-hygiene/evals/evals.json",
+    ".agents/skills/code-hygiene/SKILL.md",
+    "docs/code-hygiene.md"
   ],
   "patterns": {
     "debug.console-log": { "severity": "warn" },
