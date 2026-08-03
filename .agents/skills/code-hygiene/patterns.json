@@ -1,0 +1,54 @@
+{
+  "$schema": "./patterns.schema.json",
+  "version": "0.1",
+  "patterns": [
+    {
+      "id": "debug.console-log",
+      "regex": "console\\.log\\s*\\(",
+      "severity": "warn",
+      "message": "console.log left in source — remove before commit"
+    },
+    {
+      "id": "debug.console-warn-error",
+      "regex": "console\\.(warn|error)\\s*\\(",
+      "severity": "info",
+      "message": "console.warn/error left in source — verify intentional"
+    },
+    {
+      "id": "debug.breakpoint",
+      "regex": "\\bdebugger\\b",
+      "severity": "blocker",
+      "message": "debugger statement in source"
+    },
+    {
+      "id": "debug.python-pdb",
+      "regex": "\\b(pdb\\.set_trace|binding\\.pry|import\\s+pdb|breakpoint\\(\\))",
+      "severity": "blocker",
+      "message": "Python/Ruby debugger breakpoint in source"
+    },
+    {
+      "id": "debug.php-dd",
+      "regex": "\\b(dd\\(|var_dump\\(|print_r\\(|error_log\\()\\s*[^)]",
+      "severity": "warn",
+      "message": "PHP debug helper in source — remove before commit"
+    },
+    {
+      "id": "todo.marker",
+      "regex": "\\b(TODO|FIXME|HACK|XXX)\\b",
+      "severity": "info",
+      "message": "TODO/FIXME/HACK/XXX marker in source"
+    },
+    {
+      "id": "catch.empty",
+      "regex": "catch\\s*(\\([^)]*\\))?\\s*\\{\\s*\\}",
+      "severity": "warn",
+      "message": "empty catch block — error silently swallowed"
+    },
+    {
+      "id": "catch.silent",
+      "regex": "catch\\s*(\\([^)]*\\))?\\s*\\{\\s*//\\s*silently\\s+swallow",
+      "severity": "info",
+      "message": "explicit silent-swallow catch — verify intentional"
+    }
+  ]
+}
