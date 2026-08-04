@@ -1,8 +1,5 @@
-# pr-description-sync Specification
+## MODIFIED Requirements
 
-## Purpose
-Define the rules the `pr-description` skill in regenerate mode must obey when recomputing an open Pull Request's body from the branch's current commit range, including template parity with the open mode, strict stop conditions, mandatory preview and approval, and library inventory.
-## Requirements
 ### Requirement: Branch-state-driven PR body regeneration
 The `pr-description` skill in regenerate mode SHALL recompute the body of an open Pull Request from the branch's current commit range (`git merge-base <default-branch> HEAD..HEAD`) and SHALL apply it via `gh pr edit --body-file` after the user has approved a side-by-side preview.
 
@@ -40,7 +37,16 @@ The root `.agents/skills/` library SHALL contain `pr-description` with valid fro
 - **WHEN** `.agents/skills/README.md` is read
 - **THEN** the `Personal/.agents/skills/` block includes `pr-description` in its listing
 
-## History
+## REMOVED Requirements
 
-- [[../changes/archive/2026-08-04-merge-pr-description-skills/proposal|merge-pr-description-skills (2026-08-04)]] — Merge `create-pr` and `update-pr-description` into a single `pr-description` skill that dispatches between open and regenerate modes; remove the separate inventory, stop-condition, preview, and persistence requirements that were tied to the standalone regenerate skill.
-- [[../changes/archive/2026-07-25-add-update-pr-description-skill/proposal|add-update-pr-description-skill (2026-07-25)]] — Adds `update-pr-description` to keep an open PR's body in sync with the branch without closing and reopening it.
+### Requirement: Strict stop conditions
+**Reason**: Strict stop conditions are now enforced by the regenerate-mode reference note (`references/pr-regenerate.md` §1, §2, §10), which the merged skill loads on demand. The capability surface no longer needs to encode the same conditions in a standalone spec; the mode-dispatch rule in the new `skill-folder-conventions` requirement ensures the workflow detail lives in the mode-specific reference.
+**Migration**: Stop conditions are documented in `.agents/skills/pr-description/references/pr-regenerate.md` (no PR on branch, MERGED/CLOSED state, dirty working tree, untracked-only warning).
+
+### Requirement: Mandatory preview and explicit approval
+**Reason**: The preview-and-approval flow is now part of the regenerate-mode reference note and does not need to be a separate capability-level requirement.
+**Migration**: Preview and approval rules are documented in `.agents/skills/pr-description/references/pr-regenerate.md` §6 and §7.
+
+### Requirement: No new dependencies or persistence
+**Reason**: The dependency and persistence rules for PR management are now documented in the merged skill's body §5 (Guardrails) and in the regenerate-mode reference. Codifying them as a separate capability-level requirement is redundant once both modes live in one skill.
+**Migration**: Rules live in `.agents/skills/pr-description/SKILL.md` §5 (Guardrails) and the mode-specific references.
