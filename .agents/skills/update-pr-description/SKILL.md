@@ -68,7 +68,7 @@ MERGE_BASE=$(git merge-base "$BASE" HEAD)
 
 The PR title is **not** modified by this skill. The title is recomputed only for the preview report so the user can see whether the title still matches the branch; the skill exits without touching the title unless the user explicitly passes `--title`.
 
-- Maximum 30 characters total (per `pr-style.md`).
+- Maximum 30 characters total (per `pr-style.md` at `.agents/skills/create-pr/references/pr-style.md`).
 - Present tense, imperative mood.
 - No trailing period.
 
@@ -145,7 +145,7 @@ If the user passed `--title`, also call `gh pr edit --title "<title>"` using the
 
 When the user passes `--title <text>`:
 
-1. Validate the title against the 30-character rule from `pr-style.md`. Reject longer titles with a non-zero exit and a clear message.
+1. Validate the title against the 30-character rule from `pr-style.md` (`.agents/skills/create-pr/references/pr-style.md`). Reject longer titles with a non-zero exit and a clear message.
 2. Add the proposed title to the preview report alongside the existing title.
 3. Apply with `gh pr edit --title "<text>"` only after the same approval as the body.
 
@@ -179,5 +179,5 @@ The skill is idempotent. Re-running it on a PR whose body already matches the br
 - Editing the working tree, force-pushing, running `git rebase`, or staging any path. The skill is read-only on the worktree and write-only on the PR body.
 - Operating on a PR whose `state` is `MERGED` or `CLOSED`. Stop and report.
 - Inventing commits, file paths, or diff stats that are not present in `git log` / `git diff` output for the merge-base range. The regenerated body must reflect the branch's actual state.
-- Reimplementing the PR description template. Reuse the exact structure from `create-pr` and `pr-style.md`.
-- Adding scripts under `.agents/skills/update-pr-description/bin/`. The skill is a single `SKILL.md`; no auxiliary scripts.
+- Reimplementing the PR description template. Reuse the exact structure from `create-pr` and `pr-style.md` (`.agents/skills/create-pr/references/pr-style.md`).
+- Adding scripts under `.agents/skills/update-pr-description/scripts/`. The skill is a single `SKILL.md`; no auxiliary scripts.
