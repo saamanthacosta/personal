@@ -34,7 +34,7 @@ When the conversation does not establish a reliable reusable workflow, ask focus
 
 ## 3. Draft the skill
 
-Write the file to `.agents/skills/<name>/SKILL.md` where `<name>` is the kebab-case skill name. Use the built-in `customize-opencode` skill as the canonical reference for frontmatter shape, naming, description quality, optional fields, and trigger conventions.
+Write the file to `.agents/skills/<name>/SKILL.md` where `<name>` is the kebab-case skill name. Use the built-in `customize-opencode` skill and the local `references/` notes — `skill-format-spec.md` for layout and frontmatter, `skill-description-quality.md` for the description rules, and `skill-creation-practices.md` for body conventions and validation — as the canonical references.
 
 Frontmatter requirements:
 
@@ -65,7 +65,7 @@ Confirm before closing:
 - The frontmatter `name` matches the folder name and the description is third-person and trigger-oriented.
 - Frontmatter contains only `name`, `description`, `license`, `compatibility`, and `metadata`.
 - The body defines concrete inputs, workflow, and completion criteria.
-- Required structural rules are met per the loaded `customize-opencode` guidance.
+- Required structural rules are met per the loaded `customize-opencode` guidance and the three `references/` notes (`skill-format-spec.md`, `skill-description-quality.md`, `skill-creation-practices.md`).
 
 ## 6. Complete according to execution context
 

@@ -53,7 +53,7 @@ The file SHALL be created when the timeline starts and finalized when the run en
 
 #### Scenario: Session index is regenerated
 - **WHEN** a session file is added or finalized
-- **THEN** `node .agents/skills/skill-sessions/bin/format-sessions.mjs` regenerates `docs/skill-sessions/INDEX.md` with one row per session
+- **THEN** `node .agents/skills/skill-sessions/scripts/format-sessions.mjs` regenerates `docs/skill-sessions/INDEX.md` with one row per session
 
 ### Requirement: Skill execution uses a stable event schema
 The workspace SHALL define a JSONL event schema that drives both the chat timeline and the durable session log.
