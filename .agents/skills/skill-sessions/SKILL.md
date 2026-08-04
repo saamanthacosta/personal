@@ -15,7 +15,7 @@ Companion helper for `create-task` and any specialist skill. Produces:
 - A durable per-session markdown report under `docs/skill-sessions/`.
 - A regenerated `docs/skill-sessions/INDEX.md` after every session.
 
-Both surfaces consume the same JSONL event stream defined in `SCHEMA.md` (and validated by `schema/skill-session-event.schema.json`), so chat and history cannot diverge.
+Both surfaces consume the same JSONL event stream defined in `references/skill-session-schema.md` (and validated by `assets/skill-session-event.schema.json`), so chat and history cannot diverge.
 
 ## When to load
 
@@ -27,9 +27,9 @@ Both surfaces consume the same JSONL event stream defined in `SCHEMA.md` (and va
 
 | Script | Purpose |
 | --- | --- |
-| `bin/format-sessions.mjs` | Regenerate `docs/skill-sessions/INDEX.md` from per-run files. |
-| `bin/render.mjs` | Render a JSONL event stream to the chat timeline block. |
-| `bin/append-event.mjs` | Append an event to a session file and finalize frontmatter on session end. |
+| `scripts/format-sessions.mjs` | Regenerate `docs/skill-sessions/INDEX.md` from per-run files. |
+| `scripts/render.mjs` | Render a JSONL event stream to the chat timeline block. |
+| `scripts/append-event.mjs` | Append an event to a session file and finalize frontmatter on session end. |
 
 ## Conventions
 
