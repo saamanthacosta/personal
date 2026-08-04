@@ -67,3 +67,38 @@ The `skill-authoring` skill MUST express its standalone trigger and nested owner
 #### Scenario: Adjacent customization request
 - **WHEN** a user discusses customization without explicitly requesting standalone skill authoring
 - **THEN** the description and body identify that `skill-authoring` is not the sole workflow owner unless directly invoked
+
+## ADDED Requirements
+
+### Requirement: Subfolder convention guidance
+
+When authoring a skill that needs auxiliary files, the `skill-authoring` workflow SHALL guide the author to use the three-allowed subfolders according to the skill's complexity.
+
+#### Scenario: Author creates a complex skill needing helpers
+
+- **WHEN** the conversation establishes that the target skill needs executable helpers and long-form reference docs
+- **THEN** the generated skill folder contains `scripts/` and `references/` but NOT `assets/` unless static data inputs are needed
+
+#### Scenario: Author creates a simple skill
+
+- **WHEN** the target skill is a single-file workflow with no auxiliary files
+- **THEN** the generated skill folder contains only `SKILL.md` and no subfolders
+
+#### Scenario: Author wants to add tests for scripts
+
+- **WHEN** the skill has an executable helper in `scripts/` and the author wants to test it
+- **THEN** the tests live at `scripts/tests/*.mjs` and no top-level `tests/` folder is created
+
+### Requirement: Interdependency declaration
+
+When authoring a skill that references another skill by name (in the description, body, or invocation), the `skill-authoring` workflow SHALL ensure the skill body includes an explicit `## Interdependencies` section.
+
+#### Scenario: Skill invokes another skill by slash command
+
+- **WHEN** the generated skill body invokes `openspec-vault-link` via `/opsx-link openspec-vault-link`
+- **THEN** the `## Interdependencies` table includes `openspec-vault-link | invokes | by name (slash)`
+
+#### Scenario: Skill has no inter-skill references
+
+- **WHEN** the generated skill is self-contained with no references to other skills
+- **THEN** the `## Interdependencies` section states `None — this skill is self-contained.`

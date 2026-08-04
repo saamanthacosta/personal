@@ -85,6 +85,44 @@ After the change lands, no `.agents/skills/<name>/` directory SHALL contain a `b
 - **WHEN** the repository is searched for the legacy folder names outside the change's archive
 - **THEN** zero matches appear in tracked files
 
+## ADDED Requirements
+
+### Requirement: Extra-structure policy
+
+A skill folder MAY introduce additional subfolders nested inside the three allowed top-level folders (`scripts/`, `references/`, `assets/`), provided the nested subfolder is specific to the parent folder's purpose and does not duplicate a top-level folder's function.
+
+Nested subfolders that serve the same purpose as a top-level folder (e.g., `scripts/scripts/` or `references/references/`) are forbidden. Nested subfolders that serve a specific implementation need (e.g., `scripts/tests/` for skill-script test files) are allowed.
+
+#### Scenario: Skill has tests nested under scripts/
+
+- **WHEN** `skill-sessions` places test files at `scripts/tests/format-sessions.test.mjs`
+- **THEN** the structure is valid because `tests/` is nested inside `scripts/` (not a top-level `tests/`), serves a specific purpose (script testing), and does not duplicate any top-level folder function
+
+#### Scenario: Skill attempts to duplicate a top-level folder
+
+- **WHEN** a skill introduces `scripts/scripts/` or `references/references/`
+- **THEN** the structure is invalid because it duplicates the top-level folder function
+
+#### Scenario: Skill introduces an undocumented nested subfolder
+
+- **WHEN** a skill introduces `scripts/fixtures/` for static test fixtures
+- **THEN** this is valid because the fixtures serve a specific purpose (test data), are nested under `scripts/`, and do not duplicate any top-level folder function
+
+### Requirement: Skill interdependency documentation
+
+Every skill that references another skill by name SHALL document that relationship in a `## Interdependencies` section in its `SKILL.md` body. The section SHALL list each referenced skill, the nature of the relationship, and the coupling mechanism.
+
+#### Scenario: Skill invokes another skill by slash command
+
+- **WHEN** `openspec-apply-change` invokes `openspec-vault-link` via `/opsx-link openspec-vault-link`
+- **THEN** `openspec-apply-change/SKILL.md` contains an `## Interdependencies` section with `openspec-vault-link | invokes | by name (slash)`
+
+#### Scenario: Skill is self-contained
+
+- **WHEN** `apply-github-ruleset` has no references to other skills
+- **THEN** `apply-github-ruleset/SKILL.md` contains `## Interdependencies` with the note `None — this skill is self-contained.`
+
 ## History
 
 - [[../changes/archive/2026-08-04-skill-folder-conventions/proposal|skill-folder-conventions (2026-08-04)]] — Introduce the canonical three-folder model and replace the legacy `bin/` + loose-file allowances.
+- [[../../changes/skill-audit-improvements/proposal|skill-audit-improvements]] — Add extra-structure policy, skill interdependency documentation requirement, and clarify that nested subfolders inside allowed top-level folders are permitted with justification.
