@@ -4,10 +4,10 @@ Rule reference for commits in the `Personal/` workspace. The full rules live inl
 
 ## Verifier
 
-`bin/verify-commit.py` reads the latest commit from HEAD and exits with status `0` when it follows the rules, `1` otherwise. Wire it into `pre-commit` or a CI step to enforce the rule.
+`scripts/verify-commit.py` reads the latest commit from HEAD and exits with status `0` when it follows the rules, `1` otherwise. Wire it into `pre-commit` or a CI step to enforce the rule.
 
 ```text
-python3 bin/verify-commit.py
+python3 scripts/verify-commit.py
 ```
 
 ## Examples

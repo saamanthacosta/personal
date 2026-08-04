@@ -2,7 +2,7 @@
 
 Version: `0.1.0`
 
-The JSONL stream consumed by both the chat renderer (`bin/render.mjs`) and the durable writer (`bin/append-event.mjs`). One JSON object per line; UTF-8; trailing newline required.
+The JSONL stream consumed by both the chat renderer (`scripts/render.mjs`) and the durable writer (`scripts/append-event.mjs`). One JSON object per line; UTF-8; trailing newline required.
 
 ## Common fields
 

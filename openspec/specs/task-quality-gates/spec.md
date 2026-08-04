@@ -25,7 +25,7 @@ The workflow SHALL apply the OpenSpec `explore`, `propose`, `apply`, `verify`, `
 #### Scenario: Pre-archive scan is the single full audit
 
 - **WHEN** the workflow reaches the `pre-commit-review` phase after `apply` and `verify`, and `pre-commit-review` did not produce a blocker
-- **THEN** the workflow runs `node .agents/skills/cve-scan/bin/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>` exactly once and produces the only full-audit report for the change under `docs/cve-reports/`
+- **THEN** the workflow runs `node .agents/skills/cve-scan/scripts/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>` exactly once and produces the only full-audit report for the change under `docs/cve-reports/`
 
 #### Scenario: Apply has no full audit call site
 

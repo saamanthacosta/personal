@@ -1,4 +1,8 @@
-## ADDED Requirements
+# pr-description-sync Specification
+
+## Purpose
+Define the rules the `update-pr-description` skill must obey when recomputing an open Pull Request's body from the branch's current commit range, including template parity with `create-pr`, strict stop conditions, mandatory preview and approval, and library inventory.
+## Requirements
 
 ### Requirement: Branch-state-driven PR body regeneration
 The `update-pr-description` skill SHALL recompute the body of an open Pull Request from the branch's current commit range (`git merge-base <default-branch> HEAD..HEAD`) and SHALL apply it via `gh pr edit --body-file` after the user has approved a side-by-side preview.

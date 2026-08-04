@@ -11,7 +11,7 @@ Rule summary for the `create-pr` skill. The skill enforces this when opening a P
 
 ## Description
 
-Use the template below. Each block is a paragraph; **paragraphs are single lines** — never soft-wrap a phrase (see `commit-style.md`). Use a blank line to start a new paragraph.
+Use the template below. Each block is a paragraph; **paragraphs are single lines** — never soft-wrap a phrase (see `commit-style.md`). Use a blank line to start a new paragraph. (After this change lands, that pointer resolves to `.agents/skills/commit/references/commit-style.md`.)
 
 ```text
 ## Summary

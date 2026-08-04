@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Smoke tests for render.mjs using the built-in node:test runner.
 // Run from repo root:
-//   node --test .agents/skills/skill-sessions/tests/render.test.mjs
+//   node --test .agents/skills/skill-sessions/scripts/tests/render.test.mjs
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,8 +10,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = resolve(HERE, '..', '..', '..', '..');
-const RENDER = resolve(REPO_ROOT, '.agents/skills/skill-sessions/bin/render.mjs');
+const REPO_ROOT = resolve(HERE, '..', '..', '..', '..', '..');
+const RENDER = resolve(REPO_ROOT, '.agents/skills/skill-sessions/scripts/render.mjs');
 
 function render(events) {
   const input = events.map((e) => JSON.stringify(e)).join('\n') + '\n';

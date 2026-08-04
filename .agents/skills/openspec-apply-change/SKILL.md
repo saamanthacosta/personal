@@ -109,7 +109,7 @@ Implement tasks from an OpenSpec change.
 
 **Output During Implementation**
 
-Every `Working on task N/M` line MUST emit a `step_started` event on the shared JSONL stream consumed by `.agents/skills/skill-sessions/bin/render.mjs` and `bin/append-event.mjs`. The matching `✓ Task complete` line MUST emit `step_completed`. The chat timeline block and the durable `docs/skill-sessions/<id>.md` derive from the same stream.
+Every `Working on task N/M` line MUST emit a `step_started` event on the shared JSONL stream consumed by `.agents/skills/skill-sessions/scripts/render.mjs` and `scripts/append-event.mjs`. The matching `✓ Task complete` line MUST emit `step_completed`. The chat timeline block and the durable `docs/skill-sessions/<id>.md` derive from the same stream.
 
 ```
 ## Implementing: <change-name> (schema: <schema-name>)

@@ -42,7 +42,7 @@ The workflow SHALL inspect OpenSpec artifacts, task status, Git state, prior pha
 When `create-task` uses another skill's methodology, the specialist phase MUST return control to the next incomplete `create-task` phase and MUST NOT redefine specialist completion as completion of the full task.
 
 #### Scenario: Skill authoring phase completes
-- **WHEN** `create-skill` finishes drafting and validating a `SKILL.md` within an active `create-task` workflow
+- **WHEN** `skill-authoring` finishes drafting or updating and validating a `SKILL.md` within an active `create-task` workflow
 - **THEN** the workflow continues with task verification, archive, security reporting, commit, push, and PR phases as applicable
 
 #### Scenario: Specialist phase requires clarification
@@ -61,38 +61,38 @@ The `create-task` skill's documented Purpose SHALL describe the full lifecycle s
 - **THEN** the Purpose text states that the orchestrator retains lifecycle ownership and never surrenders authority to a specialist
 
 ### Requirement: Skill exposes a structured snapshot helper for resume detection
-The `create-task` orchestrator SHALL provide a `bin/phase-status.mjs` helper that emits a JSON snapshot of the current git branch, porcelain status, upstream tracking, divergence from the upstream, openspec active changes, and any existing PR for the current branch. The orchestrator SHALL use this helper (or an equivalent direct invocation of the same commands) for resume detection before any phase that mutates repository state.
+The `create-task` orchestrator SHALL provide a `scripts/phase-status.mjs` helper that emits a JSON snapshot of the current git branch, porcelain status, upstream tracking, divergence from the upstream, openspec active changes, and any existing PR for the current branch. The orchestrator SHALL use this helper (or an equivalent direct invocation of the same commands) for resume detection before any phase that mutates repository state.
 
 #### Scenario: phase-status emits JSON to stdout
-- **WHEN** a user runs `node bin/phase-status.mjs` from the repository root inside a git working tree
+- **WHEN** a user runs `node scripts/phase-status.mjs` from the repository root inside a git working tree
 - **THEN** it writes a single JSON object to stdout containing `git`, `openspec`, and `pr` sections
 - **AND** the JSON is parseable by standard tools (`jq`, `JSON.parse`)
 
 #### Scenario: phase-status supports --pretty and --phase filters
-- **WHEN** a user runs `node bin/phase-status.mjs --pretty --phase openspec`
+- **WHEN** a user runs `node scripts/phase-status.mjs --pretty --phase openspec`
 - **THEN** the output is pretty-printed JSON containing only the `openspec` section
 - **AND** the helper exits 0 on success, 2 on usage errors, 3 when not in a git working tree, and 4 when openspec or gh is missing (with a partial snapshot still emitted)
 
 #### Scenario: phase-status is non-interactive and idempotent
-- **WHEN** a user runs `node bin/phase-status.mjs` twice in succession
+- **WHEN** a user runs `node scripts/phase-status.mjs` twice in succession
 - **THEN** both invocations emit the same JSON content (modulo `generated_at` timestamp)
 - **AND** neither invocation writes any files, opens any network connections beyond what `git`/`openspec`/`gh` already do, or prompts the user
 
 ### Requirement: Skill validates type/slug/branch input before branch creation
-The `create-task` orchestrator SHALL provide a `bin/slug-check.mjs` helper that validates a `(type, slug)` pair or a `--branch <name>` against the §1.1 type table and the §1.2 slug rules. The orchestrator SHALL run the helper (or an equivalent check) before any `git checkout -b` to catch malformed input before mutating repository state.
+The `create-task` orchestrator SHALL provide a `scripts/slug-check.mjs` helper that validates a `(type, slug)` pair or a `--branch <name>` against the §1.1 type table and the §1.2 slug rules. The orchestrator SHALL run the helper (or an equivalent check) before any `git checkout -b` to catch malformed input before mutating repository state.
 
 #### Scenario: slug-check accepts a valid type+slug
-- **WHEN** a user runs `node bin/slug-check.mjs feature csv-export`
+- **WHEN** a user runs `node scripts/slug-check.mjs feature csv-export`
 - **THEN** it writes a JSON object to stdout with `type: "feature"`, `slug: "csv-export"`, and `branch: "feat/csv-export"`
 - **AND** it exits 0
 
 #### Scenario: slug-check rejects a malformed slug
-- **WHEN** a user runs `node bin/slug-check.mjs feature "CSV_Export"`
+- **WHEN** a user runs `node scripts/slug-check.mjs feature "CSV_Export"`
 - **THEN** it writes an error to stderr explaining the rejected characters
 - **AND** it exits 3
 
 #### Scenario: slug-check maps short branch prefixes to long types
-- **WHEN** a user runs `node bin/slug-check.mjs --branch feat/csv-export`
+- **WHEN** a user runs `node scripts/slug-check.mjs --branch feat/csv-export`
 - **THEN** it writes a JSON object with `prefix: "feat"`, `type: "feature"`, and `slug: "csv-export"`
 - **AND** it exits 0
 

@@ -191,8 +191,8 @@ The pre-archive `cve-report` runs after `pre-commit-review` and before archive. 
 
 1. Generate the pre-archive full-audit report and trend index:
    ```bash
-   node .agents/skills/cve-scan/bin/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>
-   node .agents/skills/cve-scan/bin/format-report.mjs
+   node .agents/skills/cve-scan/scripts/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>
+   node .agents/skills/cve-scan/scripts/format-report.mjs
    ```
    Notes:
    - `--phase=pre-archive` replaces the previous `--phase=pre-commit`. The flag value is descriptive of when in the lifecycle the audit runs.
@@ -205,7 +205,7 @@ The pre-archive `cve-report` runs after `pre-commit-review` and before archive. 
 The staged scan runs after approval and staging but before the `git commit` command:
 
 ```bash
-node .agents/skills/cve-scan/bin/scan-staged.mjs
+node .agents/skills/cve-scan/scripts/scan-staged.mjs
 ```
 
 CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`.
@@ -315,7 +315,7 @@ The PR must include the archived OpenSpec change; if archive completion cannot b
 
 ### Skill timeline (chat block)
 
-Every phase output SHALL be preceded by a `## Skill timeline` block produced by `.agents/skills/skill-sessions/bin/render.mjs`. The block is fed by the shared JSONL event stream and is the same source that populates `docs/skill-sessions/<id>.md`.
+Every phase output SHALL be preceded by a `## Skill timeline` block produced by `.agents/skills/skill-sessions/scripts/render.mjs`. The block is fed by the shared JSONL event stream and is the same source that populates `docs/skill-sessions/<id>.md`.
 
 ```
 ## Skill timeline

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Smoke tests for format-sessions.mjs using the built-in node:test runner.
 // Run from repo root:
-//   node --test .agents/skills/skill-sessions/tests/format-sessions.test.mjs
+//   node --test .agents/skills/skill-sessions/scripts/tests/format-sessions.test.mjs
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,8 +12,8 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
-const REPO_ROOT = join(HERE, '..', '..', '..', '..');
-const FORMAT = join(REPO_ROOT, '.agents/skills/skill-sessions/bin/format-sessions.mjs');
+const REPO_ROOT = join(HERE, '..', '..', '..', '..', '..');
+const FORMAT = join(REPO_ROOT, '.agents/skills/skill-sessions/scripts/format-sessions.mjs');
 
 async function withSessionsDir(fn) {
   const dir = await mkdtemp(join(tmpdir(), 'skill-sessions-'));

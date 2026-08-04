@@ -1,6 +1,6 @@
 ---
 name: create-task
-description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use create-skill instead), or read-only summaries.
+description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
 license: MIT
 compatibility: Requires git, openspec CLI, gh CLI, and Node.js 18+ for the bundled scripts.
 metadata:
@@ -40,7 +40,7 @@ If the request is ambiguous between *ship* and *investigate*, ask before loading
 Do not load if the request is any of:
 
 - **Pure research / spike** — "investigate X — don't change anything yet" → use `openspec-explore` or `research-spike`.
-- **Skill-only creation** — "create a new skill called X" with no associated implementation change → use `create-skill` directly.
+- **Skill-only creation** — "create a new skill called X" with no associated implementation change → use `skill-authoring` directly.
 - **Read-only summary** — "summarize what changed", "what does skill Y do" → no skill needed.
 - **Explicit opt-out from delivery** — "draft X, no PR" → use a different workflow; this orchestrator always ends in a PR.
 
@@ -66,11 +66,11 @@ This skill uses progressive disclosure. Load files only when you need them:
 | `SKILL.md` (this file)            | Always — contracts, phase policy, gotchas, indexes          |
 | `references/task-workflow.md`     | Once at the start of every workflow run (phase mechanics)  |
 | `references/BLOCKER-CHECKLIST.md` | Only when entering `pre-commit-review` (decision detail)   |
-| `bin/phase-status.mjs`        | Before resume detection; before any destructive git op     |
-| `bin/slug-check.mjs`          | After deriving a slug; before creating the branch          |
-| `evals/evals.json`                | When evaluating the description or expected outputs        |
+| `scripts/phase-status.mjs`        | Before resume detection; before any destructive git op     |
+| `scripts/slug-check.mjs`          | After deriving a slug; before creating the branch          |
+| `assets/evals.json`                | When evaluating the description or expected outputs        |
 
-Do not invent a separate state file. The orchestrator reads observable signals (git, openspec, gh) — `bin/phase-status.mjs` is the canonical snapshot helper.
+Do not invent a separate state file. The orchestrator reads observable signals (git, openspec, gh) — `scripts/phase-status.mjs` is the canonical snapshot helper.
 
 ## Workflow at a glance
 
@@ -114,15 +114,15 @@ Read the user's natural-language request and classify it into exactly one type. 
 Validate type and slug with:
 
 ```bash
-node bin/slug-check.mjs feature csv-export
-node bin/slug-check.mjs --branch feat/csv-export
+node scripts/slug-check.mjs feature csv-export
+node scripts/slug-check.mjs --branch feat/csv-export
 ```
 
 Personal skill work uses these existing types rather than introducing a `skill` type. Creating a new reusable skill is a `chore`; correcting broken skill behavior is a `fix`; restructuring without behavior change is a `refactor`; documentation work or test-only work keeps the corresponding type. Confirm the selected type and branch before repository mutation.
 
 ### 1.2 Slug derivation
 
-Derive a kebab-case slug from the user's words: lowercase, ASCII letters/digits, hyphens only, no leading/trailing hyphens, max ~50 chars. `bin/slug-check.mjs` enforces all of these. If uncertain, propose a slug and ask for confirmation **before** any repository mutation.
+Derive a kebab-case slug from the user's words: lowercase, ASCII letters/digits, hyphens only, no leading/trailing hyphens, max ~50 chars. `scripts/slug-check.mjs` enforces all of these. If uncertain, propose a slug and ask for confirmation **before** any repository mutation.
 
 Examples:
 
@@ -135,7 +135,7 @@ Examples:
 Workflow state lives in observable places; do not invent a separate state file. To take a snapshot before resuming:
 
 ```bash
-node bin/phase-status.mjs --pretty
+node scripts/phase-status.mjs --pretty
 ```
 
 The snapshot emits JSON covering git (branch, porcelain, upstream, divergence), openspec (active changes), and gh (existing PRs). Use it to decide which phases to skip.
@@ -184,9 +184,9 @@ An archive or synchronization failure blocks the CVE-report and commit phases. V
 
 ### 3.1 Explore — CVE threat-model gate
 
-Apply the five threat-model questions from `../cve-scan/cve-methodology.md` (the "Threat-Model Questions" section) before exiting explore, plus the create-task-specific "Specialist handoff" prompt below. The methodology document owns the five threat-model questions; this orchestrator owns the sixth.
+Apply the five threat-model questions from `../cve-scan/references/cve-methodology.md` (the "Threat-Model Questions" section) before exiting explore, plus the create-task-specific "Specialist handoff" prompt below. The methodology document owns the five threat-model questions; this orchestrator owns the sixth.
 
-The five (from `../cve-scan/cve-methodology.md`):
+The five (from `../cve-scan/references/cve-methodology.md`):
 
 1. What data classes does the change read, write, transmit, or expose?
 2. Which trust boundaries does it cross?
@@ -198,7 +198,7 @@ The sixth (orchestrator-specific):
 
 - Specialist handoff: does the task match another skill, and if so, how will that phase return control without skipping verification or delivery?
 
-This orchestrator gate-checks that the explore phase surfaced and answered (or explicitly waived) all six, and that the answers are recorded in the explore notes. If `../cve-scan/cve-methodology.md` is not in context, read it to confirm the canonical wording.
+This orchestrator gate-checks that the explore phase surfaced and answered (or explicitly waived) all six, and that the answers are recorded in the explore notes. If `../cve-scan/references/cve-methodology.md` is not in context, read it to confirm the canonical wording.
 
 ### 3.2 Proposal/design — security-section validation
 
@@ -236,12 +236,12 @@ The orchestrator's interface to the blocker-classification gate:
 The orchestrator's interface to the cve-scan skill:
 
 - **Pre-archive report:** after `verify` and `pre-commit-review`, and before archive, run:
-  `node .agents/skills/cve-scan/bin/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>`.
+  `node .agents/skills/cve-scan/scripts/full-audit.mjs --change <change-path> --phase=pre-archive --scope=<name>`.
   This is the **only** full-audit invocation per change. The previous post-archive scan has been relocated to this pre-archive position; the apply-boundary scan was already removed by `dedupe-cve-audit`. The orchestrator's own §3.5 names this gate as the final, authoritative CVE gate. The report must cover the complete working tree plus the active change directory.
 - **Skip-on-blocker:** if `pre-commit-review` produces a blocker on this pass, this gate is skipped (§3.4) — the loop-back invalidates the diff anyway. The post-fix pass runs both gates in order.
 - **Loop-back on findings:** if the pre-archive report surfaces a CRITICAL or unoverridden HIGH finding, the workflow loops back to `apply` (or `propose` if the finding requires design or spec edits) and does not proceed to archive.
-- Run `node .agents/skills/cve-scan/bin/format-report.mjs` to regenerate the CVE trend index after the final report is written.
-- **Commit boundary:** after commit approval, stage only intended files, including the archived change directory, synchronized specs, CVE reports, and trend index. Run `node .agents/skills/cve-scan/bin/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`.
+- Run `node .agents/skills/cve-scan/scripts/format-report.mjs` to regenerate the CVE trend index after the final report is written.
+- **Commit boundary:** after commit approval, stage only intended files, including the archived change directory, synchronized specs, CVE reports, and trend index. Run `node .agents/skills/cve-scan/scripts/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`.
 
 A missing final report, stale trend index, scanner error, CRITICAL finding, or unoverridden HIGH finding blocks the commit. When the cve-scan tooling is unavailable, apply the methodology fallback in `.agents/skills/cve-scan/SKILL.md` and surface missing coverage in the verification report.
 
@@ -259,7 +259,7 @@ Do not prepare or stage a commit until §2.3 is complete. Mechanics for the arch
 
 ### 4.2 Staged-scan gate
 
-The pre-archive CVE report (§3.5) is produced before archive. Once the change is archived and intended commit files are staged, the staged-pattern scan is the commit-boundary gate: run `node .agents/skills/cve-scan/bin/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`. Mechanics in `references/task-workflow.md` under "Phase: cve-report". No commit may execute until the staged scan passes.
+The pre-archive CVE report (§3.5) is produced before archive. Once the change is archived and intended commit files are staged, the staged-pattern scan is the commit-boundary gate: run `node .agents/skills/cve-scan/scripts/scan-staged.mjs`. CRITICAL or unoverridden HIGH findings block the commit. If a staged report file is generated, stage it and rerun the staged scan before executing `git commit`. Mechanics in `references/task-workflow.md` under "Phase: cve-report". No commit may execute until the staged scan passes.
 
 ### 4.3 Commit grouping and message rules
 
@@ -279,17 +279,17 @@ Use the `create-pr` skill for both the preview format and the PR creation comman
 
 These are facts the orchestrator will get wrong without being told. Highest-value section to keep current. When the agent makes a mistake you correct, add it here.
 
-- **Resume detection is mandatory.** Before any phase, run `bin/phase-status.mjs` and read openspec/git/gh state. Never recreate completed artifacts; never re-run destructive git ops that already succeeded.
+- **Resume detection is mandatory.** Before any phase, run `scripts/phase-status.mjs` and read openspec/git/gh state. Never recreate completed artifacts; never re-run destructive git ops that already succeeded.
 - **The full-audit phase is `pre-archive`, not `pre-commit`.** The flag `--phase=pre-archive` replaced `--phase=pre-commit` during the `dedupe-cve-audit` cleanup. There is exactly one full-audit invocation per change; the apply-boundary scan was removed.
 - **Specialist completion is NOT task completion.** A `## Specialist Phase: <name> — done` block is the specialist's exit signal to the orchestrator. The orchestrator must still run verify, pre-commit-review, cve-report, archive, commit, push, and pr.
-- **CVE tooling lives at `.agents/skills/cve-scan/bin/*.mjs`.** Don't search for it elsewhere; if a script is missing, fall back to the methodology in `.agents/skills/cve-scan/SKILL.md` and surface the gap in the verification report.
+- **CVE tooling lives at `.agents/skills/cve-scan/scripts/*.mjs`.** Don't search for it elsewhere; if a script is missing, fall back to the methodology in `.agents/skills/cve-scan/SKILL.md` and surface the gap in the verification report.
 - **`openspec list --json` after archive must NOT contain the change.** That is the gate that says archive succeeded. If the change is still listed, archive failed and you must not commit.
 - **Skip-on-blocker for cve-report.** If pre-commit-review classifies a blocker, the pre-archive cve-report does NOT run on that pass — the loop-back invalidates the diff. The post-fix pass runs both gates in order.
-- **The branch-prefix table uses short forms** (`feat`, `fix`, `refactor`, ...) but task types are long (`feature`, `fix`, `refactor`, ...). `bin/slug-check.mjs` maps between them.
+- **The branch-prefix table uses short forms** (`feat`, `fix`, `refactor`, ...) but task types are long (`feature`, `fix`, `refactor`, ...). `scripts/slug-check.mjs` maps between them.
 - **PR must include the archived OpenSpec change.** If archive completion cannot be verified, stop before PR creation.
 - **Never use `git add -A` or `git add .`.** Stage only the intended files. The staged scan (§4.2) inspects the same files.
-- **`bin/phase-status.mjs` exits with code 4** when openspec or gh is missing. Partial snapshots are still emitted; the orchestrator treats that as degraded but not blocking for the phases that don't depend on the missing tool.
-- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `create-skill` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
+- **`scripts/phase-status.mjs` exits with code 4** when openspec or gh is missing. Partial snapshots are still emitted; the orchestrator treats that as degraded but not blocking for the phases that don't depend on the missing tool.
+- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `skill-authoring` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
 
 ## 6. Available scripts
 
@@ -297,8 +297,8 @@ Run from the repository root. Each script supports `--help` for full usage.
 
 | Script                       | Purpose                                            | When to run                                              |
 | ---------------------------- | -------------------------------------------------- | -------------------------------------------------------- |
-| `bin/phase-status.mjs`   | Snapshot git + openspec + gh state as JSON         | Before resume detection; before any destructive git op   |
-| `bin/slug-check.mjs`     | Validate type/slug/branch against §1.1–§1.2 rules  | After deriving a slug; before creating the branch        |
+| `scripts/phase-status.mjs`   | Snapshot git + openspec + gh state as JSON         | Before resume detection; before any destructive git op   |
+| `scripts/slug-check.mjs`     | Validate type/slug/branch against §1.1–§1.2 rules  | After deriving a slug; before creating the branch        |
 
 Exit-code conventions:
 
@@ -312,9 +312,9 @@ Exit-code conventions:
 
 Load on demand, not all at once. Update this index when paths move rather than chasing broken links.
 
-- `references/task-workflow.md` — Load once at the start of every workflow run. Holds phase mechanics (commands, formats, recovery procedures) that this policy file summarizes.
-- `references/BLOCKER-CHECKLIST.md` — Load only when entering `pre-commit-review`. Holds the three-class taxonomy, loop-back routing heuristic, and skip/dismissal reason templates.
-- `evals/evals.json` — Triggering and expected-output evals for the description and the orchestrator contract. Iterate when triggering accuracy or contract fidelity drifts.
+  - `references/task-workflow.md` — Load once at the start of every workflow run. Holds phase mechanics (commands, formats, recovery procedures) that this policy file summarizes.
+  - `references/BLOCKER-CHECKLIST.md` — Load only when entering `pre-commit-review`. Holds the three-class taxonomy, loop-back routing heuristic, and skip/dismissal reason templates.
+  - `assets/evals.json` — Triggering and expected-output evals for the description and the orchestrator contract. Iterate when triggering accuracy or contract fidelity drifts.
 
 ## 8. Guardrails
 
