@@ -1,6 +1,16 @@
-# PR Open Workflow (mode: open)
+---
+name: create-pr
+description: Open a Pull Request with a short title, a structured description, the file tree of changes, and the list of commits. Auto-assigns the PR to the current GitHub user. Load when the user asks to open, create, or send a PR.
+license: MIT
+compatibility: Local machine skill — requires git and the gh CLI authenticated against the target repo.
+metadata:
+  author: personal
+  version: "1.0"
+---
 
-The open-mode workflow for the `pr-description` skill. Load this file when the user wants to **create** a new Pull Request. Pair it with `references/pr-style.md` for the body template.
+# Create Pull Request Pipeline
+
+You are an expert git workflow assistant. The goal is to open a Pull Request that follows the workspace commit conventions: a short title, a structured description, and the assignee set to the current GitHub user.
 
 ## 1. Detect context
 
@@ -24,7 +34,7 @@ If everything is clean, continue.
 
 ## 3. Gather the data for the PR
 
-Collect everything you need before writing the description. See `references/pr-style.md` for the title and body rules; this section is the data-gathering mechanics.
+Collect everything you need before writing the description.
 
 ### Commits
 
@@ -54,8 +64,6 @@ docs/
 
 ## 4. Write the title
 
-Per `references/pr-style.md`:
-
 - Maximum 30 characters total.
 - Present tense, imperative mood: `Add`, `Fix`, `Update`, `Remove`, `Refactor`.
 - No trailing period.
@@ -64,7 +72,29 @@ Per `references/pr-style.md`:
 
 ## 5. Write the description
 
-Use the template in `references/pr-style.md`. Each section is a paragraph block. **Paragraphs are single lines** — never soft-wrap a phrase (see the `commit` skill for the rule). Use blank lines to separate paragraphs.
+Use the structure below. Each section is a paragraph block. **Paragraphs are single lines** — never soft-wrap a phrase (see the `commit` skill for the rule). Use blank lines to separate paragraphs.
+
+```text
+## Summary
+
+<one paragraph: what this PR does and why, in present tense, written for a reviewer who has no context>
+
+## Changes
+
+<one paragraph per logical group of changes, mirroring the commit grouping. Each paragraph stays on a single line.>
+
+## File tree
+
+<the compact tree from step 3, fenced as a code block>
+
+## Commits
+
+<bullet list of commits from step 3, newest first or oldest first — pick one and stay consistent. Use the full subject line, no truncation.>
+
+## Notes
+
+<optional: anything a reviewer should know up front — risks, follow-ups, screenshots, links.>
+```
 
 Rules:
 

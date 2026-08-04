@@ -1,6 +1,16 @@
-# PR Regenerate Workflow (mode: regenerate)
+---
+name: update-pr-description
+description: Regenerate an open Pull Request's body (title left untouched) from the branch's current commit range against the default branch, using the same template that `create-pr` produces, and apply it via `gh pr edit --body` only after a mandatory preview and explicit user approval. Use when the user asks to refresh, update, regenerate, sync, or fix a PR description whose commits, file tree, or diff stats no longer match the body, and explicitly NOT when the user asks to close and reopen the PR, modify the PR title, rewrite commit history, or run a code review.
+license: MIT
+compatibility: Local machine skill — requires git, the gh CLI authenticated against the target repo, and an OPEN PR on the current branch.
+metadata:
+  author: personal
+  version: "1.0"
+---
 
-The regenerate-mode workflow for the `pr-description` skill. Load this file when the user wants to **refresh / update / regenerate / sync / fix** the body of an existing Pull Request — without closing and reopening it. Pair it with `references/pr-style.md` for the body template.
+# Update Pull Request Description
+
+You are an expert git workflow assistant. The goal is to keep an open Pull Request's body consistent with the branch's current state — without closing and reopening the PR — by regenerating the body from `merge-base..HEAD` and applying it via `gh pr edit --body` only after the user has approved a side-by-side preview.
 
 ## 1. Detect context
 
@@ -9,11 +19,11 @@ Ground yourself before touching anything:
 - Confirm you are inside a git repo: `git rev-parse --is-inside-work-tree`.
 - Read the current branch: `git branch --show-current`.
 - Identify the default branch: `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`.
-- Read the PR for the current branch: `gh pr view --json number,url,state,title,body --jq '{n:.number,u:.url,s:.state,t:.title,b:.body}'`. If no PR exists, stop and tell the user to open one first in `open` mode.
+- Read the PR for the current branch: `gh pr view --json number,url,state,title,body --jq '{n:.number,u:.url,s:.state,t:.title,b:.body}'`. If no PR exists, stop and tell the user to open one first with `/create-pr`.
 - Read the current GitHub user (informational only): `gh api user --jq .login`.
 - Read the repo slug: `gh repo view --json nameWithOwner --jq .nameWithOwner`.
 
-Stop and report if the PR's `state` is anything other than `OPEN`. This skill only operates on open PRs.
+Stop and report if the PR's `state` is anything other than `OPEN`. The skill only operates on open PRs.
 
 ## 2. Inspect the working tree
 
@@ -43,7 +53,7 @@ MERGE_BASE=$(git merge-base "$BASE" HEAD)
 ### File tree
 
 - `git diff --name-status "$MERGE_BASE"...HEAD` — list of changed files with status markers (`A`, `M`, `D`, `R`, `C`).
-- Render a compact tree grouped by top-level directory, identical in shape to the `open` mode output.
+- Render a compact tree grouped by top-level directory, identical in shape to the `create-pr` output.
 - No raw diffs in the description; the PR diff view is the source of truth.
 
 ### Diff stats
@@ -58,7 +68,7 @@ MERGE_BASE=$(git merge-base "$BASE" HEAD)
 
 The PR title is **not** modified by this skill. The title is recomputed only for the preview report so the user can see whether the title still matches the branch; the skill exits without touching the title unless the user explicitly passes `--title`.
 
-- Maximum 30 characters total (per `references/pr-style.md`).
+- Maximum 30 characters total (per `pr-style.md` at `.agents/skills/create-pr/references/pr-style.md`).
 - Present tense, imperative mood.
 - No trailing period.
 
@@ -66,7 +76,29 @@ The recomputed title is shown in the preview alongside the existing title with a
 
 ## 5. Write the description
 
-Use the structure in `references/pr-style.md`. Each section is a paragraph block; **paragraphs are single lines** — never soft-wrap a phrase (see the `commit` skill for the rule). Use blank lines to separate paragraphs.
+Use the structure below. Each section is a paragraph block; **paragraphs are single lines** — never soft-wrap a phrase (see the `commit` skill for the rule). Use blank lines to separate paragraphs.
+
+```text
+## Summary
+
+<one paragraph: what this PR currently does and why, in present tense, written for a reviewer who has no context. Derive from the commit subjects and the shortstat.>
+
+## Changes
+
+<one paragraph per logical group of changes, mirroring the commit grouping. Each paragraph stays on a single line.>
+
+## File tree
+
+<the compact tree from step 3, fenced as a code block>
+
+## Commits
+
+<bullet list of commits from step 3, oldest first. Use the full subject line, no truncation.>
+
+## Notes
+
+<optional: preserved verbatim from the current PR body if present. Drop entirely if absent.>
+```
 
 Rules:
 
@@ -107,13 +139,13 @@ After `gh pr edit` returns, delete the temp files:
 rm -f /tmp/pr-update-current-"$PR_NUMBER".md /tmp/pr-update-body-"$PR_NUMBER".md
 ```
 
-If the user passed `--title`, also call `gh pr edit --title "<text>"` using the same approval gate. Title changes share the preview; do not apply them silently.
+If the user passed `--title`, also call `gh pr edit --title "<title>"` using the same approval gate. Title changes share the preview; do not apply them silently.
 
 ## 7. Optional `--title` flag
 
 When the user passes `--title <text>`:
 
-1. Validate the title against the 30-character rule from `references/pr-style.md`. Reject longer titles with a non-zero exit and a clear message.
+1. Validate the title against the 30-character rule from `pr-style.md` (`.agents/skills/create-pr/references/pr-style.md`). Reject longer titles with a non-zero exit and a clear message.
 2. Add the proposed title to the preview report alongside the existing title.
 3. Apply with `gh pr edit --title "<text>"` only after the same approval as the body.
 
@@ -147,5 +179,5 @@ The skill is idempotent. Re-running it on a PR whose body already matches the br
 - Editing the working tree, force-pushing, running `git rebase`, or staging any path. The skill is read-only on the worktree and write-only on the PR body.
 - Operating on a PR whose `state` is `MERGED` or `CLOSED`. Stop and report.
 - Inventing commits, file paths, or diff stats that are not present in `git log` / `git diff` output for the merge-base range. The regenerated body must reflect the branch's actual state.
-- Reimplementing the PR description template. Reuse the exact structure from `references/pr-style.md`.
-- Adding scripts under `.agents/skills/pr-description/scripts/`. The skill is a single `SKILL.md` with reference notes; no auxiliary scripts.
+- Reimplementing the PR description template. Reuse the exact structure from `create-pr` and `pr-style.md` (`.agents/skills/create-pr/references/pr-style.md`).
+- Adding scripts under `.agents/skills/update-pr-description/scripts/`. The skill is a single `SKILL.md`; no auxiliary scripts.
