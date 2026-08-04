@@ -181,3 +181,6 @@ The skill is idempotent. Re-running it on a PR whose body already matches the br
 - Inventing commits, file paths, or diff stats that are not present in `git log` / `git diff` output for the merge-base range. The regenerated body must reflect the branch's actual state.
 - Reimplementing the PR description template. Reuse the exact structure from `create-pr` and `pr-style.md` (`.agents/skills/create-pr/references/pr-style.md`).
 - Adding scripts under `.agents/skills/update-pr-description/scripts/`. The skill is a single `SKILL.md`; no auxiliary scripts.
+## Interdependencies
+
+None — this skill is self-contained.

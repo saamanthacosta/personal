@@ -62,6 +62,36 @@ Body requirements when applicable:
 - Quality criteria or completion checks
 - Guardrails or anti-patterns
 - Example outputs or invocations
+- `## Interdependencies` section (see below)
+
+## Interdependencies
+
+Every skill that references another skill by name MUST include a `## Interdependencies` table in its body:
+
+```markdown
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `<skill-name>` | invokes / mentions / wraps / loads | by name (slash) / by name (bare) / by path |
+```
+
+- **Nature**: `invokes` (calls the other skill), `mentions` (references in prose), `wraps` (skill-level interface to another's tooling), `loads` (explicit dependency)
+- **Coupling**: `by name (slash)` (`/skill-name`), `by name (bare)` (prose reference), `by path` (script path)
+
+A self-contained skill with no inter-skill references includes the section with: `None — this skill is self-contained.`
+
+See `references/skill-format-spec.md` → `## Skill Interdependency Declaration` for the full contract.
+
+## Subfolder Conventions
+
+Prefer a flat skill (`SKILL.md` only) when the entire behaviour fits without bloating the body. Introduce a subfolder only when needed:
+
+- `references/` — long-form docs, methodology notes, checklists; keeps body clean
+- `scripts/` — executable helpers; test files MAY live at `scripts/tests/`
+- `assets/` — JSON catalogs, schemas, eval fixtures
+
+For the full decision table and the extra-structure policy (nested subfolders inside allowed ones), see `references/skill-format-spec.md` → `## Subfolder Conventions` and `## Extra-Structure Policy`.
 
 ## 5. Author the skill (update mode)
 

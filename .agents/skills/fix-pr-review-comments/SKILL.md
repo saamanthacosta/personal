@@ -313,3 +313,10 @@ If the skill is run a second time on the same PR:
 - New comments posted after the previous run will be picked up and produce new fixups against the same original `<sha>`. The final autosquash collapses them all.
 - Threads already resolved in a previous run are skipped in step 7.2 (`already_resolved == true`); replies posted by the current user in a previous run are skipped in step 5.3 via the `has_replied` map from step 7.1, so a re-run does not duplicate the reply.
 - Never try to "unfix" or revert an existing fixup — that is the user's call, with `git rebase -i`.
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `pr-review-comments` | mentions | by name (bare) |
+
+None — this skill is self-contained.

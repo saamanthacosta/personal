@@ -2,6 +2,7 @@
 name: skill-sessions
 description: Emit structured chat timelines for skill runs and persist per-session reports under docs/skill-sessions/. Use when a `create-task` (or specialist skill) run needs to show live progress, source citations, and a final summary in chat, and to keep a durable history of what happened, which skills were loaded, and which sources were consulted.
 license: MIT
+compatibility: Local machine skill — requires Node.js and the skill's scripts directory.
 metadata:
   author: saamanthacosta
   version: "0.1"
@@ -42,3 +43,20 @@ Both surfaces consume the same JSONL event stream defined in `references/skill-s
 
 - This skill provides a methodology and helpers. It does not own the orchestrator lifecycle.
 - A `create-task` run owns the JSONL stream; specialists append events but never start a new stream mid-run.
+
+## Tests
+
+Test files for the skill's scripts live at `scripts/tests/`. This is valid because:
+- The tests are specific to the scripts (not the skill as a whole)
+- They are nested under `scripts/` (not a top-level `tests/` folder, which is not in the spec allowlist)
+- They could not use a top-level `tests/` folder without violating the spec
+
+This structure is permitted by the extra-structure policy in `skill-authoring/references/skill-format-spec.md` → `## Extra-Structure Policy`.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `create-task` | mentions | by name (bare) |
+
+None — this skill is self-contained.

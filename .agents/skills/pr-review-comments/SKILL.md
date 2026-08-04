@@ -146,3 +146,11 @@ After all reviews are posted, print:
 ```
 
 If any commit failed to post, list the commit and the API error verbatim and stop.
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `fix-pr-review-comments` | mentions | by name (bare) |
+| `cve-scan` | mentions | by name (bare) |
+
+None — this skill is self-contained.

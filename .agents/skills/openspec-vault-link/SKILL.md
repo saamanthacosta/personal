@@ -202,3 +202,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - The bookmark step must always be preceded by a backup and followed by JSON validation. If validation fails, restore from backup and treat as a non-fatal warning.
 - When in doubt about a path match (ambiguous prefix, unusual extension, path inside a non-source directory), leave it as backticked text and move on. Better to under-link than to link wrongly.
 - All output paths in messages are relative to the vault root.
+
+## Interdependencies
+
+None — this skill is self-contained.

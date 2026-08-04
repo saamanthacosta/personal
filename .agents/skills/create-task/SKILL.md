@@ -327,3 +327,13 @@ Load on demand, not all at once. Update this index when paths move rather than c
 - Never treat specialist completion as permission to skip verification, archive, security, commit, push, or PR phases.
 - Never open a PR on a failed push or failed check.
 - Never stash existing commits; only stash working-tree changes.
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `openspec-apply-change` | mentions | by name (bare) |
+| `openspec-vault-link` | invokes | by name (slash) |
+| `skill-authoring` | mentions | by name (bare) |
+| `cve-scan` | invokes | by path |
+| `skill-sessions` | mentions | by name (bare) |
+| `customize-opencode` | loads | by name (bare) |

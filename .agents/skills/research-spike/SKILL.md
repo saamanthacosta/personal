@@ -178,3 +178,13 @@ When an orchestrator (not `create-task` — `research-spike` is not a `create-ta
 - `../openspec-explore/SKILL.md` — the deliberately-distinct skill; use it when the user wants thinking-time, not a note.
 - `../openspec-vault-link/SKILL.md` — Obsidian vault integration patterns used here (wikilinks, frontmatter tags, MOC).
 - `BACKLOG.md` (Personal) — `[T1] Skill: research-spike (Personal)` is the originating backlog entry; composition contracts with `latex-paper-draft`, `bibtex-curate`, and `paper-citation-audit` are recorded there.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `skill-authoring` | references | by name (bare) |
+| `openspec-explore` | references | by name (bare) |
+| `openspec-vault-link` | references | by name (bare) |
+
+None — this skill is self-contained.

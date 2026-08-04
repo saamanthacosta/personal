@@ -139,3 +139,11 @@ After creation, return:
 - Reusing the body of a single commit as the whole PR description — the PR description is a rollup, not a copy.
 - Forgetting the assignee, or hardcoding someone else's handle.
 - Opening the PR with uncommitted local changes still in the working tree.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `commit` | mentions | by name (bare) |
+
+None — this skill is self-contained.

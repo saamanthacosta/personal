@@ -1,5 +1,4 @@
 {
-  "$schema": "https://agentskills.io/skill-creation/evaluating-skills",
   "skill_name": "create-task",
   "description": "Triggering and expected-output evals for the create-task orchestrator. Use to verify the description still triggers on the right prompts and that the orchestrator's contract is honored end-to-end.",
   "evals": [
