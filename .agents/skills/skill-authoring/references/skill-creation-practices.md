@@ -42,6 +42,16 @@ Assets in `assets/` are static files the body references but does not
 execute — templates, schemas, sample data, starter configs. They ship with
 the skill and are read by the body at authoring or runtime.
 
+### Asset file naming
+
+Asset files in `assets/` follow a small, deliberate naming pattern. Pick the suffix that matches the file's role, not its content:
+
+- **`<plural-noun>.json`** — a catalog of structured records the body or scripts read at runtime. Examples in this workspace: `cve-scan/assets/patterns.json` (regex catalog), `create-task/assets/evals.json` (triggering + expected-output fixtures). Use a plural noun that names what the file contains; do not prefix with `data-` or suffix with `-data`.
+- **`<name>.schema.json`** — a JSON Schema (Draft 2020-12 or later). The `.schema.json` suffix is the standard external convention from the JSON Schema project; keep it. Examples: `skill-sessions/assets/skill-session-event.schema.json`.
+- **`<name>.<ext>`** (no suffix) — a one-off asset that does not fit either category: templates, starter configs, sample fixtures that are not catalogs, single-record blobs. Use a kebab-case stem and the file's natural extension (e.g. `assets/pr-template.md`, `assets/example-config.yaml`).
+
+When in doubt: a file the body parses as a list of records is a catalog → plural noun. A file that validates records is a schema → `.schema.json`. Everything else is a one-off → bare name.
+
 ## Validation loop
 
 The upstream docs recommend an **eval-driven** loop:
