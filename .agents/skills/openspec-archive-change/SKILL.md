@@ -130,3 +130,9 @@ All artifacts complete. All tasks complete.
 - Show clear summary of what happened
 - If sync is requested, use openspec-sync-specs approach (agent-driven)
 - If delta specs exist, always run the sync assessment and show the combined summary before prompting
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `openspec-vault-link` | invokes | by name (slash) |

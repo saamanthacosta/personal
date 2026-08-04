@@ -152,3 +152,11 @@ For a non-OpenSpec change (pure code refactor across services, a multi-package b
 - A single commit per skill that mixes the path moves with unrelated code changes (muddles `git blame` and review).
 - A commit that renames a file and updates its callers in different commits (the intermediate commit's references are broken).
 - A commit titled `WIP` or `part 1` — every commit must be reviewable on its own.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `cve-scan` | invokes | by path |
+
+None — this skill is self-contained.

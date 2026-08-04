@@ -56,3 +56,7 @@ The runner is a sub-project at `Personal/github-rules-as-code/`. It is a separat
 - Mutated rulesets on the target repo.
 - Updated `.github/CODEOWNERS` on the target repo.
 - Log lines (pino JSON) to stdout.
+
+## Interdependencies
+
+None — this skill is self-contained.
