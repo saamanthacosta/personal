@@ -1,6 +1,6 @@
 ---
 name: create-task
-description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use create-skill instead), or read-only summaries.
+description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
 license: MIT
 compatibility: Requires git, openspec CLI, gh CLI, and Node.js 18+ for the bundled scripts.
 metadata:
@@ -40,7 +40,7 @@ If the request is ambiguous between *ship* and *investigate*, ask before loading
 Do not load if the request is any of:
 
 - **Pure research / spike** — "investigate X — don't change anything yet" → use `openspec-explore` or `research-spike`.
-- **Skill-only creation** — "create a new skill called X" with no associated implementation change → use `create-skill` directly.
+- **Skill-only creation** — "create a new skill called X" with no associated implementation change → use `skill-authoring` directly.
 - **Read-only summary** — "summarize what changed", "what does skill Y do" → no skill needed.
 - **Explicit opt-out from delivery** — "draft X, no PR" → use a different workflow; this orchestrator always ends in a PR.
 
@@ -289,7 +289,7 @@ These are facts the orchestrator will get wrong without being told. Highest-valu
 - **PR must include the archived OpenSpec change.** If archive completion cannot be verified, stop before PR creation.
 - **Never use `git add -A` or `git add .`.** Stage only the intended files. The staged scan (§4.2) inspects the same files.
 - **`scripts/phase-status.mjs` exits with code 4** when openspec or gh is missing. Partial snapshots are still emitted; the orchestrator treats that as degraded but not blocking for the phases that don't depend on the missing tool.
-- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `create-skill` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
+- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `skill-authoring` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
 
 ## 6. Available scripts
 

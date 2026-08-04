@@ -1,7 +1,7 @@
 # skill-authoring Specification
 
 ## Purpose
-TBD - created by archiving change add-create-skill. Update Purpose after archive.
+Define a single shared skill that authors other skills under `.agents/skills/`, dispatching between create and update modes from the user's prompt and the presence of the target file.
 ## Requirements
 ### Requirement: Conversation-derived workflow extraction
 The skill authoring workflow SHALL review the current conversation before drafting and SHALL extract any reusable sequence, decision points, branching logic, guardrails, and completion criteria it can reliably infer.
@@ -58,12 +58,12 @@ After finalization, the workflow SHALL distinguish standalone invocation from us
 - **THEN** the skill emits a specialist-phase boundary and returns control for verification, archive, security reporting, commit, push, and PR phases
 
 ### Requirement: Supported invocation boundary
-The `create-skill` skill MUST express its standalone trigger and nested ownership boundary through its supported `description` field and body instructions. It MUST NOT rely on unknown frontmatter fields to control model invocation.
+The `skill-authoring` skill MUST express its standalone trigger and nested ownership boundary through its supported `description` field and body instructions. It MUST NOT rely on unknown frontmatter fields to control model invocation.
 
 #### Scenario: Skill metadata is validated
-- **WHEN** the `create-skill` frontmatter and instructions are reviewed
+- **WHEN** the `skill-authoring` frontmatter and instructions are reviewed
 - **THEN** invocation behavior is described without `disable-model-invocation` or any other unsupported control field
 
 #### Scenario: Adjacent customization request
 - **WHEN** a user discusses customization without explicitly requesting standalone skill authoring
-- **THEN** the description and body identify that `create-skill` is not the sole workflow owner unless directly invoked
+- **THEN** the description and body identify that `skill-authoring` is not the sole workflow owner unless directly invoked

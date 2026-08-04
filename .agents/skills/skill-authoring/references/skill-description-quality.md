@@ -2,7 +2,7 @@
 title: Agent Skills — description quality
 source: https://agentskills.io/skill-creation/optimizing-skill-descriptions.md
 captured: 2026-08-03
-purpose: Rules for the frontmatter `description` field — the part that decides whether a skill is ever loaded. Used by `create-skill` and `update-skill` when authoring or retuning a skill.
+purpose: Rules for the frontmatter `description` field — the part that decides whether a skill is ever loaded. Used by `skill-authoring` when authoring or retuning a skill.
 ---
 
 # Agent Skills — description quality

@@ -2,7 +2,7 @@
 title: Agent Skills — format spec
 source: https://agentskills.io/specification.md
 captured: 2026-08-03
-purpose: Authoritative on-disk layout, frontmatter fields, and allowed subfolders per the Agent Skills spec. Used by `create-skill` and `update-skill` to validate structural decisions.
+purpose: Authoritative on-disk layout, frontmatter fields, and allowed subfolders per the Agent Skills spec. Used by `skill-authoring` to validate structural decisions.
 ---
 
 # Agent Skills — format spec
@@ -34,7 +34,7 @@ Per the spec, skill authors may introduce exactly these subfolders:
 No other subfolders are part of the public layout. Anything beyond
 `references/`, `scripts/`, and `assets/` is implementation-specific to a
 single skill and must be justified in the skill body. This workspace enforces
-that rule: `create-skill` and `update-skill` refuse other subfolders.
+that rule: `skill-authoring` refuses other subfolders.
 
 ## Frontmatter
 

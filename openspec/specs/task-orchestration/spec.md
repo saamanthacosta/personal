@@ -42,7 +42,7 @@ The workflow SHALL inspect OpenSpec artifacts, task status, Git state, prior pha
 When `create-task` uses another skill's methodology, the specialist phase MUST return control to the next incomplete `create-task` phase and MUST NOT redefine specialist completion as completion of the full task.
 
 #### Scenario: Skill authoring phase completes
-- **WHEN** `create-skill` finishes drafting and validating a `SKILL.md` within an active `create-task` workflow
+- **WHEN** `skill-authoring` finishes drafting or updating and validating a `SKILL.md` within an active `create-task` workflow
 - **THEN** the workflow continues with task verification, archive, security reporting, commit, push, and PR phases as applicable
 
 #### Scenario: Specialist phase requires clarification

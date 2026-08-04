@@ -2,7 +2,7 @@
 title: Agent Skills — creation practices
 source: https://agentskills.io/skill-creation/best-practices.md
 captured: 2026-08-03
-purpose: Body-content conventions, scripts/assets usage, and the eval-driven validation loop recommended by the Agent Skills creator docs. Used by `create-skill` and `update-skill` when shaping the body of a skill.
+purpose: Body-content conventions, scripts/assets usage, and the eval-driven validation loop recommended by the Agent Skills creator docs. Used by `skill-authoring` when shaping the body of a skill.
 ---
 
 # Agent Skills — creation practices
@@ -57,7 +57,7 @@ behaviour, run at least a small eval set before declaring the skill done.
 
 ## Workspace contract
 
-`create-skill` and `update-skill` are the only skills in this workspace
+`skill-authoring` is the only skill in this workspace
 that should author or mutate other skills. Both read this note plus the
 built-in `customize-opencode` skill for OpenCode-specific constraints
 (frontmatter field allowlist, restart-required behaviour, loader paths).
