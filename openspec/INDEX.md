@@ -9,7 +9,13 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 
 ## Active
 
+- [[changes/nest-skill-lifecycle/proposal|nest-skill-lifecycle]]
+
 ## Archived
+
+### 2026-08
+
+- [[changes/archive/2026-08-05-portfolio-base-ui/proposal|portfolio-base-ui]]
 
 ### 2026-07
 
@@ -27,6 +33,11 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[changes/archive/2026-07-26-dedupe-cve-audit/proposal|dedupe-cve-audit]]
 - [[changes/archive/2026-07-26-fix-pr-review-comments-resolve-push/proposal|fix-pr-review-comments-resolve-push]]
 - [[changes/archive/2026-07-28-add-pre-archive-gates/proposal|add-pre-archive-gates]]
+- [[changes/archive/2026-08-03-improve-create-task-skill/proposal|improve-create-task-skill]]
+- [[changes/archive/2026-08-03-skill-audit-improvements/proposal|skill-audit-improvements]]
+- [[changes/archive/2026-08-04-merge-skill-authoring/proposal|merge-skill-authoring]]
+- [[changes/archive/2026-08-04-revert-pr-description-merge/proposal|revert-pr-description-merge]]
+- [[changes/archive/2026-08-04-skill-folder-conventions/proposal|skill-folder-conventions]]
 
 ## Specifications
 
@@ -34,6 +45,7 @@ Single MOC for the OpenSpec folder in this vault. For workspace conventions and 
 - [[branch-preflight/spec|branch-preflight]]
 - [[github-rules-as-code-runner/spec|github-rules-as-code-runner]]
 - [[obsidian-vault-integration/spec|obsidian-vault-integration]]
+- [[portfolio-ui-system/spec|portfolio-ui-system]]
 - [[pr-description-sync/spec|pr-description-sync]]
 - [[pr-review-workflow/spec|pr-review-workflow]]
 - [[skill-doc-organization/spec|skill-doc-organization]]
