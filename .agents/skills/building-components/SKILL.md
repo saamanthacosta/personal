@@ -24,7 +24,7 @@ A component that hits every composability and accessibility rule but ships
 with mismatched nested radii, `transition: all` hover, or proportional
 digits in a live counter still feels broken. Treat UI polish as a build
 gate, not a final-pass nice-to-have. The consolidated checklist lives in
-[polish.mdx](./references/polish.mdx); the canonical source of every
+[polish.md](./references/polish.md); the canonical source of every
 principle is `make-interfaces-feel-better`. Load that skill when the
 review passes through the polish checklist so the rationale and the
 boundary cases (which motion to skip, which icon weight to match) are
@@ -36,22 +36,22 @@ existing design tokens instead.
 
 ## References
 
-- [definitions.mdx](./references/definitions.mdx) - Artifact taxonomy (primitives, components, blocks, templates)
-- [principles.mdx](./references/principles.mdx) - Core principles for component design
-- [accessibility.mdx](./references/accessibility.mdx) - ARIA, keyboard navigation, WCAG compliance
-- [composition.mdx](./references/composition.mdx) - Composable component patterns
-- [as-child.mdx](./references/as-child.mdx) - The as-child pattern for element polymorphism
-- [polymorphism.mdx](./references/polymorphism.mdx) - Polymorphic component patterns
-- [types.mdx](./references/types.mdx) - TypeScript typing patterns for components
-- [state.mdx](./references/state.mdx) - Controlled vs uncontrolled state management
-- [data-attributes.mdx](./references/data-attributes.mdx) - Using data attributes for styling and state
-- [design-tokens.mdx](./references/design-tokens.mdx) - Design token systems and theming
-- [styling.mdx](./references/styling.mdx) - Component styling approaches
-- [registry.mdx](./references/registry.mdx) - shadcn-style registry distribution
-- [npm.mdx](./references/npm.mdx) - Publishing components to npm
-- [marketplaces.mdx](./references/marketplaces.mdx) - Component marketplace distribution
-- [docs.mdx](./references/docs.mdx) - Writing component documentation
-- [polish.mdx](./references/polish.mdx) - UI polish checklist (consolidated from `make-interfaces-feel-better`)
+- [definitions.md](./references/definitions.md) - Artifact taxonomy (primitives, components, blocks, templates)
+- [principles.md](./references/principles.md) - Core principles for component design
+- [accessibility.md](./references/accessibility.md) - ARIA, keyboard navigation, WCAG compliance
+- [composition.md](./references/composition.md) - Composable component patterns
+- [as-child.md](./references/as-child.md) - The as-child pattern for element polymorphism
+- [polymorphism.md](./references/polymorphism.md) - Polymorphic component patterns
+- [types.md](./references/types.md) - TypeScript typing patterns for components
+- [state.md](./references/state.md) - Controlled vs uncontrolled state management
+- [data-attributes.md](./references/data-attributes.md) - Using data attributes for styling and state
+- [design-tokens.md](./references/design-tokens.md) - Design token systems and theming
+- [styling.md](./references/styling.md) - Component styling approaches
+- [registry.md](./references/registry.md) - shadcn-style registry distribution
+- [npm.md](./references/npm.md) - Publishing components to npm
+- [marketplaces.md](./references/marketplaces.md) - Component marketplace distribution
+- [docs.md](./references/docs.md) - Writing component documentation
+- [polish.md](./references/polish.md) - UI polish checklist (consolidated from `make-interfaces-feel-better`)
 
 ---
 
