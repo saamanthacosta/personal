@@ -194,4 +194,4 @@ When there are no findings, omit the findings table, state "No actionable interf
 | --- | --- | --- |
 | `building-components` | referenced-by | by name (bare) |
 | `openspec-explore` | referenced-by | by name (bare) |
-| `ponytail` | referenced-by | by name (bare) |
+| `ponytail-review` | referenced-by | by name (bare) |

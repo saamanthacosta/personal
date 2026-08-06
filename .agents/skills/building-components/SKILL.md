@@ -30,9 +30,9 @@ review passes through the polish checklist so the rationale and the
 boundary cases (which motion to skip, which icon weight to match) are
 in context.
 
-When using `ponytail` mode for component work, do not let the lazy ladder
-trim polish — those principles are off-limits; reach for the existing
-design tokens instead.
+When applying a `ponytail-review` pass for component work, do not let the
+lazy ladder trim polish — those principles are off-limits; reach for the
+existing design tokens instead.
 
 ## References
 
@@ -60,4 +60,4 @@ design tokens instead.
 | Skill | Nature | Coupling |
 | --- | --- | --- |
 | `make-interfaces-feel-better` | loads | by name (bare) |
-| `ponytail` | mentions | by name (bare) |
+| `ponytail-review` | mentions | by name (bare) |
