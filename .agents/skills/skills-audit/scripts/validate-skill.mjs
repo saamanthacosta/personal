@@ -93,7 +93,7 @@ function warn(area, msg) {
   const desc = frontmatter.description || '';
   const isFirstPerson = /^(I |I'm |I am )/i.test(desc);
   const isTooLong = desc.length > 200;
-  const hasTrigger = /[`'"]/.test(desc.slice(0, 80)); // rough heuristic for front-loaded triggers
+  const hasTrigger = /[`'"\/]/.test(desc.slice(0, 80)); // backticks, quotes, or slash commands as front-loaded triggers
   const isMultiline = desc.includes('\n');
   if (isFirstPerson) warn('DESCRIPTION', 'Description uses first-person voice');
   if (isTooLong) warn('DESCRIPTION', `Description is ${desc.length} chars (may be truncated)`);

@@ -1,41 +1,61 @@
 ---
 name: ponytail-audit
-description: >
-  Whole-repo audit for over-engineering. Like ponytail-review, but scans the
-  entire codebase instead of a diff: a ranked list of what to delete, simplify,
-  or replace with stdlib/native equivalents. Use when the user says "audit this
-  codebase", "audit for over-engineering", "what can I delete from this repo",
-  "find bloat", "ponytail-audit", or "/ponytail-audit". One-shot report, does
-  not apply fixes.
+description: Use /ponytail-audit on a repo to rank what to delete, simplify, or replace with stdlib or native equivalents. Triggered by "audit this codebase" or "find bloat".
+license: MIT
+compatibility: Model-only skill — operates on the current repo.
+metadata:
+  author: personal
+  version: "0.1"
 ---
 
-ponytail-review, repo-wide. Scan the whole tree instead of a diff. Rank
-findings biggest cut first.
+# Ponytail Audit
 
-## Tags
+Like `ponytail-review`, but scans the entire codebase instead of a diff. Output is a ranked list of what to delete, simplify, or replace with stdlib or native equivalents, biggest cut first.
 
-Same as ponytail-review:
+## 1. Hunt
 
-- `delete:` dead code, unused flexibility, speculative feature. Replacement: nothing.
-- `stdlib:` hand-rolled thing the standard library ships. Name the function.
-- `native:` dependency or code doing what the platform already does. Name the feature.
-- `yagni:` abstraction with one implementation, config nobody sets, layer with one caller.
-- `shrink:` same logic, fewer lines. Show the shorter form.
+Walk the repo for these patterns:
 
-## Hunt
+- Dependencies the standard library or platform already ships.
+- Single-implementation interfaces.
+- Factories with one product.
+- Wrappers that only delegate.
+- Files exporting one thing.
+- Dead flags and config.
+- Hand-rolled stdlib.
 
-Deps the stdlib or platform already ships, single-implementation interfaces,
-factories with one product, wrappers that only delegate, files exporting one
-thing, dead flags and config, hand-rolled stdlib.
+## 2. Output format
 
-## Output
+One line per finding, ranked biggest cut first:
 
-One line per finding, ranked: `<tag> <what to cut>. <replacement>. [path]`.
-End with `net: -<N> lines, -<M> deps possible.` Nothing to cut: `Lean already. Ship.`
+`<tag> <what to cut>. <replacement>. [path]`
 
-## Boundaries
+End with `net: -<N> lines, -<M> deps possible.` if anything was cut. If nothing to cut, end with `Lean already. Ship.`
 
-Scope: over-engineering and complexity only. Correctness bugs, security holes,
-and performance are explicitly out of scope. Route them to a normal review
-pass. Lists findings, applies nothing. One-shot.
-"stop ponytail-audit" or "normal mode" to revert.
+## 3. Tags
+
+- `delete:` — dead code, unused flexibility, speculative feature. Replacement: nothing.
+- `stdlib:` — hand-rolled thing the standard library ships. Name the function.
+- `native:` — dependency or code doing what the platform already does. Name the feature.
+- `yagni:` — abstraction with one implementation, config nobody sets, layer with one caller.
+- `shrink:` — same logic, fewer lines. Show the shorter form.
+
+## Inputs
+
+- `path` (optional): the directory to audit. When omitted, audit the current repo root.
+
+## Guardrails
+
+- Scope: over-engineering and complexity only. Correctness bugs, security holes, and performance are explicitly out of scope; route them to a normal review pass.
+- Lists findings, applies nothing. One-shot.
+- "stop ponytail-audit" or "normal mode" reverts to verbose review style.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `ponytail` | mentions | by name (slash) |
+| `ponytail-review` | mentions | by name (slash) |
+| `ponytail-debt` | mentions | by name (slash) |
+
+None — this skill is self-contained.

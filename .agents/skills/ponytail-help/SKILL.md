@@ -1,17 +1,18 @@
 ---
 name: ponytail-help
-description: >
-  Quick-reference card for all ponytail modes, skills, and commands.
-  One-shot display, not a persistent mode. Trigger: /ponytail-help,
-  "ponytail help", "what ponytail commands", "how do I use ponytail".
+description: Use /ponytail-help to display the ponytail reference card (levels, skills, deactivate, configure, update). Triggered by "ponytail help" or "what ponytail commands".
+license: MIT
+compatibility: Model-only skill — no external runtime deps.
+metadata:
+  author: personal
+  version: "0.1"
 ---
 
 # Ponytail Help
 
-Display this reference card when invoked. One-shot, do NOT change mode,
-write flag files, or persist anything.
+Display this reference card when invoked. One-shot, do NOT change mode, write flag files, or persist anything.
 
-## Levels
+## 1. Levels
 
 | Level | Trigger | What change |
 |-------|---------|-------------|
@@ -21,7 +22,7 @@ write flag files, or persist anything.
 
 Level sticks until changed or session end.
 
-## Skills
+## 2. Skills
 
 | Skill | Trigger | What it does |
 |-------|---------|--------------|
@@ -32,40 +33,59 @@ Level sticks until changed or session end.
 | **ponytail-gain** | `/ponytail-gain` | Measured-impact scoreboard: less code, less cost, more speed. |
 | **ponytail-help** | `/ponytail-help` | This card. |
 
-Codex uses `@ponytail`, `@ponytail-review`, and `@ponytail-help`; Claude Code
-and OpenCode use the slash-command forms above (OpenCode ships all six as
-slash commands).
+Codex uses `@ponytail`, `@ponytail-review`, and `@ponytail-help`; Claude Code and OpenCode use the slash-command forms above (OpenCode ships all six as slash commands).
 
-## Deactivate
+## 3. Deactivate
 
-Say "stop ponytail" or "normal mode". Resume anytime with `/ponytail`.
-`/ponytail off` also works.
+Say "stop ponytail" or "normal mode". Resume anytime with `/ponytail`. `/ponytail off` also works.
 
-## Configure Default Mode
+## 4. Configure default mode
 
-Default mode = `full`, auto-active every session. Change it:
+Default mode is `full`, auto-active every session. Change it:
 
 **Environment variable** (highest priority):
+
 ```bash
 export PONYTAIL_DEFAULT_MODE=ultra
 ```
 
 **Config file** (`~/.config/ponytail/config.json`, Windows: `%APPDATA%\ponytail\config.json`):
+
 ```json
 { "defaultMode": "lite" }
 ```
 
-Set `"off"` to disable auto-activation on session start, activate manually
-with `/ponytail` when wanted.
+Set `"off"` to disable auto-activation on session start, activate manually with `/ponytail` when wanted.
 
 Resolution: env var > config file > `full`.
 
-## Update
+## 5. Update
 
 Enable auto-update once: open `/plugin`, go to Marketplaces, pick ponytail, Enable auto-update. Claude Code then pulls new versions at startup (run `/reload-plugins` when it prompts). Manual refresh: `/plugin marketplace update ponytail` then `/reload-plugins`.
 
 If `/plugin` is not recognized, your Claude Code is out of date. Update it (`npm install -g @anthropic-ai/claude-code@latest`, or `brew upgrade claude-code`) and restart. Other hosts use their own update flow.
 
-## More
+## 6. More
 
 Full docs + examples: https://github.com/DietrichGebert/ponytail
+
+## Inputs
+
+None — this skill is a one-shot reference display.
+
+## Guardrails
+
+- One-shot. Does not change mode, write flag files, or persist anything.
+- "stop ponytail-help" or "normal mode" reverts.
+
+## Interdependencies
+
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `ponytail` | mentions | by name (slash) |
+| `ponytail-review` | mentions | by name (slash) |
+| `ponytail-audit` | mentions | by name (slash) |
+| `ponytail-debt` | mentions | by name (slash) |
+| `ponytail-gain` | mentions | by name (slash) |
+
+None — this skill is self-contained.
