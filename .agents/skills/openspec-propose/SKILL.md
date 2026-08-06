@@ -109,6 +109,35 @@ After completing all artifacts, summarize:
 - If a change with that name already exists, ask if user wants to continue it or create a new one
 - Verify each artifact file exists after writing before proceeding to next
 
+---
+
+## Pre-conditions
+
+This skill assumes the upstream explore pass has already been aligned by the
+`ponytail` process. When invoked from `create-task`, the orchestrator will
+have run the `ponytail` phase between `explore` and this one and produced a
+`## Lazy alignment` block in the `## Phase: ponytail — done` output.
+Confirm that block exists in the conversation before drafting the design —
+if it is missing, surface the gap and ask the user to run the ponytail pass
+(or invoke `create-task` for the orchestrated flow). Stand-alone
+invocations of this skill (no orchestrator) should still surface the gap
+rather than silently proceed.
+
+Read the `## Lazy alignment` block alongside the explore notes and let it
+shape the proposal: name the existing-helper reuse, drop the YAGNI item,
+keep the one-line replacement. The proposal is the contract — describe the
+aligned path, not the unaligned one.
+
+After drafting the artifacts, write the `## Lazy alignment` block into
+`proposal.md` (as the first content section, right after the why/what)
+so the alignment carries forward into the change directory and survives
+session boundaries. The block stays terse — same ponytail style.
+
+---
+
 ## Interdependencies
 
-None — this skill is self-contained.
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `openspec-explore` | depends-on | by name (bare) |
+| `ponytail` | depends-on | by name (bare) |
