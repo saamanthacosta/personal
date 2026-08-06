@@ -287,6 +287,30 @@ But this summary is optional. Sometimes the thinking IS the value.
 - **Do explore the codebase** - Ground discussions in reality
 - **Do question assumptions** - Including the user's and your own
 
+## Polish awareness
+
+When the exploration touches anything user-visible (components, screens,
+animation, theming, copy, micro-interactions), scan the relevant principles
+in `make-interfaces-feel-better` and surface them in the explore notes under
+a `## Polish hooks` heading. The goal is to make those principles a visible
+input to `propose` and `apply`, not to enforce them in this phase — explore
+still thinks, it does not prescribe.
+
+Use the principles as prompts, not as a checklist:
+
+- "Surfaces include this kind of nested element — concentric radii will
+  matter."
+- "Numbers in this view will update live — tabular nums likely needed."
+- "Animation on an entrance — check the stagger-and-restraint rule."
+
+Skip the section entirely when the change is invisible to the user (backend
+service, build script, CLI internals, schema migration).
+
+---
+
 ## Interdependencies
 
-None — this skill is self-contained.
+| Skill | Nature | Coupling |
+| --- | --- | --- |
+| `make-interfaces-feel-better` | mentions | by name (bare) |
+| `openspec-propose` | hands-off | by name (bare) |

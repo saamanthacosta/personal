@@ -1,6 +1,6 @@
 ---
 name: create-task
-description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. When the task involves UI component work (a11y, composition, design tokens, primitives), the apply phase loads `building-components` as bounded specialist guidance per §1. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
+description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → ponytail → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. When the task involves UI component work (a11y, composition, design tokens, primitives), the apply phase loads `building-components` as bounded specialist guidance per §1. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
 license: MIT
 compatibility: Requires git, openspec CLI, gh CLI, and Node.js 18+ for the bundled scripts.
 metadata:
@@ -74,25 +74,26 @@ Do not invent a separate state file. The orchestrator reads observable signals (
 
 ## Workflow at a glance
 
-The workflow is an 11-phase pipeline. Each phase emits a `## Phase: <name> — done` block before the next begins. Resume detection runs before any phase to skip completed work.
+The workflow is a 12-phase pipeline. Each phase emits a `## Phase: <name> — done` block before the next begins. Resume detection runs before any phase to skip completed work.
 
 ```
-preflight → explore → propose → apply → verify → pre-commit-review → cve-report → archive → commit → push → pr
+preflight → explore → ponytail → propose → apply → verify → pre-commit-review → cve-report → archive → commit → push → pr
 ```
 
 ```
 Progress:
-- [ ] 1/11  preflight           (worktree, branch, stash)
-- [ ] 2/11  explore             (OpenSpec + CVE threat model)
-- [ ] 3/11  propose             (proposal + design with ## Security)
-- [ ] 4/11  apply               (implement tasks.md, may load specialist)
-- [ ] 5/11  verify              (lint, typecheck, test, build)
-- [ ] 6/11  pre-commit-review   (blocker taxonomy)
-- [ ] 7/11  cve-report          (pre-archive audit + staged scan)
-- [ ] 8/11  archive             (sync delta specs → archive + vault-link)
-- [ ] 9/11  commit              (preview + staged scan + git commit)
-- [ ] 10/11 push                (set upstream + verify)
-- [ ] 11/11 pr                  (create-pr preview + gh pr create)
+- [ ] 1/12  preflight           (worktree, branch, stash)
+- [ ] 2/12  explore             (OpenSpec + CVE threat model + polish hooks)
+- [ ] 3/12  ponytail            (lazy alignment; gate before propose)
+- [ ] 4/12  propose             (proposal + design with ## Security)
+- [ ] 5/12  apply               (implement tasks.md, may load specialist)
+- [ ] 6/12  verify              (lint, typecheck, test, build)
+- [ ] 7/12  pre-commit-review   (blocker taxonomy)
+- [ ] 8/12  cve-report          (pre-archive audit + staged scan)
+- [ ] 9/12  archive             (sync delta specs → archive + vault-link)
+- [ ] 10/12 commit              (preview + staged scan + git commit)
+- [ ] 11/12 push                (set upstream + verify)
+- [ ] 12/12 pr                  (create-pr preview + gh pr create)
 ```
 
 ## 1. Orchestrator contract
@@ -174,8 +175,9 @@ OpenSpec phases are prompts, not executable subroutines. Apply their rules inlin
 
 ### 2.1 Phase integration
 
-- **explore** → apply `openspec-explore` rules, including the CVE threat-model prompts from §3.1.
-- **propose** → apply `openspec-propose` rules, including proposal/design security validation from §3.2.
+- **explore** → apply `openspec-explore` rules, including the CVE threat-model prompts from §3.1 and the `## Polish hooks` note when the change touches visible UI.
+- **ponytail** → apply the `ponytail` skill as a bounded phase over the explore output. The phase is the gate that keeps `propose` from drafting an unaligned design. Mechanics in `references/task-workflow.md` under "Phase: ponytail".
+- **propose** → apply `openspec-propose` rules, including proposal/design security validation from §3.2. Confirm the `## Lazy alignment` block from the ponytail phase is present before drafting — surface its absence rather than silently proceeding.
 - **apply** → apply `openspec-apply-change` rules. When the task subject matches a specialist skill, load and apply that skill as bounded phase guidance. Require a visible `## Specialist Phase: <name> — done` boundary, then continue with the next incomplete `create-task` phase. Never let a specialist completion summary replace verify, archive, security, commit, push, or PR delivery. (The full CVE audit does NOT run in the apply phase; §3.4 invokes it exactly once, at the post-archive gate.)
 - **verify** → run the repository and implementation checks defined in `references/task-workflow.md` under "Phase: verify".
 - **archive** → after `verify`, `pre-commit-review`, and the pre-archive `cve-report` have all passed, synchronously apply all delta specs and archive with `openspec-archive-change`, then perform best-effort `openspec-vault-link` wiring. Sync and archive must complete before commit preparation. Mechanics in `references/task-workflow.md` under "Phase: archive".
@@ -342,6 +344,9 @@ Load on demand, not all at once. Update this index when paths move rather than c
 
 | Skill | Nature | Coupling |
 | --- | --- | --- |
+| `openspec-explore` | invokes | by name (bare) |
+| `openspec-propose` | invokes | by name (bare) |
+| `ponytail` | invokes | by name (bare) |
 | `openspec-apply-change` | mentions | by name (bare) |
 | `openspec-vault-link` | invokes | by name (slash) |
 | `skill-authoring` | loads | by name (slash) |
@@ -349,3 +354,4 @@ Load on demand, not all at once. Update this index when paths move rather than c
 | `cve-scan` | invokes | by path |
 | `skill-sessions` | mentions | by name (bare) |
 | `customize-opencode` | loads | by name (bare) |
+| `make-interfaces-feel-better` | mentions | by name (bare) |

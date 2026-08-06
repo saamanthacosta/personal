@@ -91,6 +91,49 @@ openspec status --change "<name>" --json   # when an active change matches
 
 If an active change already exists with completed proposal/design artifacts and partially completed tasks, skip proposal and resume at the first incomplete task in `tasks.md`. Never recreate completed artifacts. Never re-run destructive Git operations that already succeeded.
 
+## Phase: ponytail
+
+The ponytail phase runs **after** `explore` and **before** `propose`. It applies the `ponytail` skill as a bounded pass over the proposed approach, then exits. The output is the `## Lazy alignment` block in the `## Phase: ponytail — done` block; the `propose` phase reads that block from the conversation as the contract that shapes the design.
+
+### Inputs
+
+- The active change's exploration notes (insights, threat-model answers, proposed approach) — produced in the `## Phase: explore — done` block.
+- Any `## Polish hooks` block from `explore` (loaded for reference, not enforced).
+- The codebase (must have been read during `explore`).
+
+### Mechanics
+
+1. Enter ponytail mode for the duration of this phase. Apply the lazy ladder from the `ponytail` skill against the explore notes:
+   - Does this need to exist at all? YAGNI re-check.
+   - Already in this codebase? Look for existing helpers, patterns, types.
+   - Stdlib or native platform feature?
+   - Already-installed dependency?
+   - One-line solution?
+   - Minimum code that works.
+2. Produce a `## Lazy alignment` block in the phase output (see Output below). Use the `ponytail` skill's output style: short lines, name the existing helper, drop the YAGNI item, name the one-line replacement. Do not paste prose; the block is a contract.
+3. UI polish is in scope. The `ponytail` skill names polish principles as off-limits to the lazy ladder; if the explore notes carry `## Polish hooks`, the alignment block must reflect that the lazy path still honours them (point to the existing design token, don't drop the rule).
+4. **Gate**: the workflow cannot advance to `propose` until the `## Phase: ponytail — done` block exists in the conversation. The `propose` phase reads the `## Lazy alignment` block from this output and uses it as the contract that shapes the design. The alignment block is also written into the change's `proposal.md` as a `## Lazy alignment` heading so the proposal artifact carries the alignment forward (this is the propose phase's job, not ponytail's).
+5. **Loop-back**: if the lazy alignment surfaces a missed pattern (e.g., the explore notes name Redis but the codebase already uses Postgres for the same thing), loop back to `explore` with the alignment summary and re-run. Narration: `looping back to explore — ponytail surfaced <gap>: <one-line description>`.
+6. **Cannot be skipped.** Ponytail is the gate before `propose`; there is no opt-out at run time. The user can override a specific alignment finding (record the override in the block), but the phase itself runs.
+
+### Output
+
+```
+## Phase: ponytail — done
+- Mode:      <lite | full | ultra>
+- Reuse:     <existing helper / pattern / stdlib feature>
+- Drop:      <YAGNI item removed>
+- Replace:   <one-line replacement>
+- Polish:    <alignment with explore ## Polish hooks, or "not applicable">
+
+## Lazy alignment
+<short lines, ponytail-style: name the existing helper, drop the YAGNI item, name the one-line replacement>
+
+- Next:      propose
+```
+
+---
+
 ## Phase: apply
 
 No mechanics here. The orchestrator delegates to `openspec-apply-change`. The plan lives in the change's `tasks.md`; the orchestrator checks off tasks as they complete and never lets a specialist completion summary replace verification, archive, security, commit, push, or PR delivery.
