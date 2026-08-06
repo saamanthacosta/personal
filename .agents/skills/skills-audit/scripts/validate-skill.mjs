@@ -64,6 +64,9 @@ function warn(area, msg) {
   }
   if (!frontmatter.name) fail('FRONTMATTER', 'Missing required field: name');
   if (!frontmatter.description) fail('FRONTMATTER', 'Missing required field: description');
+  if (!frontmatter.license) warn('FRONTMATTER', 'Missing `license` field (workspace convention: MIT)');
+  if (!frontmatter.compatibility) warn('FRONTMATTER', 'Missing `compatibility` field (one-line runtime note)');
+  if (!frontmatter.metadata) warn('FRONTMATTER', 'Missing `metadata` field (workspace convention: author + version)');
 }
 
 // Area 2 — Subfolders
@@ -91,30 +94,45 @@ function warn(area, msg) {
   const isFirstPerson = /^(I |I'm |I am )/i.test(desc);
   const isTooLong = desc.length > 200;
   const hasTrigger = /[`'"]/.test(desc.slice(0, 80)); // rough heuristic for front-loaded triggers
+  const isMultiline = desc.includes('\n');
   if (isFirstPerson) warn('DESCRIPTION', 'Description uses first-person voice');
   if (isTooLong) warn('DESCRIPTION', `Description is ${desc.length} chars (may be truncated)`);
+  if (isMultiline) warn('DESCRIPTION', 'Description is a multi-line block scalar (use a single-line description)');
   if (!hasTrigger && desc.length > 0) warn('DESCRIPTION', 'Description lacks trigger signal in first 80 chars');
 }
 
 // Area 4 — Body completeness
 {
   const raw = readFileSync(skillFile, 'utf-8');
-  const body = raw.replace(/^---[\s\S]*?---\n/, '');
-  const hasWorkflow = /#{1,3}\s+(Workflow|Phases|Steps|Procedure)/i.test(body) || /^\d+\.\s+\w/i.test(body);
-  const hasGuardrails = /#{1,3}\s+(Guardrails|Anti-patterns|Rules)/i.test(body);
+  const body = raw.replace(/^---[\s\S]*?---\n/, '').replace(/^\s+/, '');
+  const hasH1 = /^# [^\n]+/m.test(body);
+  const bodyAfterH1 = body.replace(/^#[^\n]*\n+/, '');
+  const firstParagraph = bodyAfterH1.trim().split(/\n{2,}/)[0] || '';
+  const hasRoleSentence = firstParagraph.length > 0 && !firstParagraph.startsWith('#');
+  const hasNumberedPhases = /^## \d+\.\s/m.test(body);
+  const hasWorkflowHeading = /#{1,3}\s+(Workflow|Phases|Steps|Procedure|Tiers?)\b/i.test(body);
+  const hasWorkflow = hasNumberedPhases || hasWorkflowHeading;
+  const hasInputs = /^##\s+Inputs\b/im.test(body);
+  const hasGuardrails = /#{1,3}\s+(Guardrails|Anti-patterns|Rules)\b/i.test(body);
+  if (!hasH1) warn('BODY', 'No H1 title (`# <Title>`) — workspace convention requires one');
+  if (!hasRoleSentence) warn('BODY', 'No role/identity sentence after the H1');
+  if (!hasNumberedPhases && !hasWorkflowHeading) warn('BODY', 'No numbered phases (`## 1.`, `## 2.`, ...) or `## Procedure`/`## Steps` style — workspace convention');
   if (!hasWorkflow) warn('BODY', 'No workflow section detected');
-  if (!hasGuardrails) warn('BODY', 'No guardrails section detected');
+  if (!hasInputs) warn('BODY', 'No `## Inputs` section — workspace convention');
+  if (!hasGuardrails) warn('BODY', 'No `## Guardrails` / `## Anti-patterns` section');
 }
 
 // Area 5 — Interdependencies
 {
   const raw = readFileSync(skillFile, 'utf-8');
-  const body = raw.replace(/^---[\s\S]*?---\n/, '');
+  // Strip fenced code blocks so headings inside ``` blocks don't confuse the matcher.
+  const stripped = raw.replace(/```[\s\S]*?```/g, '');
+  const body = stripped.replace(/^---[\s\S]*?---\n/, '').replace(/^\s+/, '');
   const hasInterdep = /^#{1,3}\s+Interdependenc/im.test(body);
   if (!hasInterdep) {
     fail('INTERDEPS', 'Missing ## Interdependencies section');
   } else {
-    const interdepSection = body.match(/^#{1,3}\s+Interdependenc[\s\S]*?(?=\n#{1,3}\s+\w|$)/m)?.[0] || '';
+    const interdepSection = body.match(/^#{1,3}\s+Interdependenc[\s\S]*?(?=\n#{1,3}\s+\w|(?![\s\S]))/m)?.[0] || '';
     const isEmpty = interdepSection.replace(/^#{1,3}\s+Interdependenc.*\n/i, '').trim().length === 0;
     const hasNone = /None\s*[—–-]\s*this skill is self-contained/i.test(interdepSection);
     const hasTable = /\| Skill\s+\|/.test(interdepSection);
@@ -133,11 +151,16 @@ if (findings.length === 0) {
 const fails = findings.filter(f => f.severity === 'FAIL');
 const warns = findings.filter(f => f.severity === 'WARN');
 
-console.log(`FAIL: ${basename(skillDir)}`);
-for (const f of fails) console.log(`  [${f.area}] ✗ ${f.message}`);
-for (const f of warns) console.log(`  [${f.area}] ! ${f.message}`);
+if (fails.length > 0) {
+  console.log(`FAIL: ${basename(skillDir)}`);
+  for (const f of fails) console.log(`  [${f.area}] ✗ ${f.message}`);
+  for (const f of warns) console.log(`  [${f.area}] ! ${f.message}`);
+  process.exit(1);
+}
 
-process.exit(fails.length > 0 ? 1 : 0);
+console.log(`WARN: ${basename(skillDir)}`);
+for (const f of warns) console.log(`  [${f.area}] ! ${f.message}`);
+process.exit(0);
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -145,21 +168,38 @@ function parseFrontmatter(text) {
   const result = {};
   const lines = text.split('\n');
   let currentKey = null;
-  let inBlock = false;
+  let blockStyle = null; // 'literal' (|) or 'folded' (>) or null
   let blockIndent = 0;
   let blockLines = [];
+
+  const flushBlock = () => {
+    if (currentKey && blockLines.length > 0) {
+      const joined = blockStyle === 'folded'
+        ? blockLines.filter(l => l.length > 0).join(' ')
+        : blockLines.join('\n');
+      result[currentKey] = joined.replace(/\n+$/, '');
+    }
+    currentKey = null;
+    blockStyle = null;
+    blockIndent = 0;
+    blockLines = [];
+  };
 
   for (const line of lines) {
     const trimmed = line.trim();
 
-      if (inBlock) {
-      if (line.startsWith(' '.repeat(blockIndent)) && !trimmed.startsWith('#')) {
+    if (currentKey !== null) {
+      // We are inside a block scalar; collect indented continuation lines.
+      const indent = line.match(/^(\s*)/)[1].length;
+      if (indent >= blockIndent && trimmed.length > 0) {
         blockLines.push(trimmed);
         continue;
+      } else if (indent === 0 && trimmed.length === 0) {
+        // blank line inside the block — keep it
+        blockLines.push('');
+        continue;
       } else {
-        result[currentKey] = blockLines.join('\n');
-        inBlock = false;
-        blockLines = [];
+        flushBlock();
       }
     }
 
@@ -168,10 +208,15 @@ function parseFrontmatter(text) {
     const kvMatch = trimmed.match(/^(\w[\w-]*):\s*(.*)/);
     if (kvMatch) {
       const [, key, value] = kvMatch;
-      if (!value.trim()) {
-        // Block value follows
+      const blockIndicator = value.trim().match(/^([|>][-+]?)$/);
+      if (blockIndicator) {
         currentKey = key;
-        inBlock = true;
+        blockStyle = blockIndicator[1].startsWith('>') ? 'folded' : 'literal';
+        blockIndent = line.match(/^(\s*)/)[1].length + 2;
+        blockLines = [];
+      } else if (value.trim() === '') {
+        currentKey = key;
+        blockStyle = 'literal';
         blockIndent = line.match(/^(\s*)/)[1].length + 2;
         blockLines = [];
       } else {
@@ -179,7 +224,7 @@ function parseFrontmatter(text) {
       }
     }
   }
-  if (inBlock && currentKey) result[currentKey] = blockLines.join('\n');
+  flushBlock();
 
   return result;
 }

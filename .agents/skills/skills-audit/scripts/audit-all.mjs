@@ -52,9 +52,12 @@ for (const skill of skills.sort()) {
   const code = result.status;
 
   const entry = { skill, code, output, fails: 0, warns: 0 };
-  if (code === 0) {
+  if (output.startsWith('PASS:')) {
     entry.status = 'PASS';
-  } else if (code === 1) {
+  } else if (output.startsWith('WARN:')) {
+    entry.status = 'WARN';
+    entry.warns = (output.match(/\[.*?\] !/g) || []).length;
+  } else if (output.startsWith('FAIL:')) {
     entry.status = 'FAIL';
     entry.fails = (output.match(/\[.*?\] ✗/g) || []).length;
     entry.warns = (output.match(/\[.*?\] !/g) || []).length;
@@ -66,15 +69,20 @@ for (const skill of skills.sort()) {
 
 // Print summary table
 const col = (s, w) => s.toString().slice(0, w).padEnd(w);
+const cellFor = (output, area) => {
+  if (output.includes(`[${area}] ✗`)) return '✗';
+  if (output.includes(`[${area}] !`)) return '!';
+  return '✓';
+};
 console.log('\nSKILL                    FM   SUB   DESC  BODY  DEPS  STATUS');
 console.log('─'.repeat(72));
 for (const r of results) {
-  const fm  = r.output.includes('[FRONTMATTER]') ? (r.output.includes(' ✗') ? '✗' : '!') : '✓';
-  const sub = r.output.includes('[SUBFOLDERS]')  ? (r.output.includes(' ✗') ? '✗' : '!') : '✓';
-  const desc= r.output.includes('[DESCRIPTION]') ? (r.output.includes(' ✗') ? '✗' : '!') : '✓';
-  const body= r.output.includes('[BODY]')       ? (r.output.includes(' ✗') ? '✗' : '!') : '✓';
-  const deps= r.output.includes('[INTERDEPS]')  ? (r.output.includes(' ✗') ? '✗' : '!') : '✓';
-  const status = r.status === 'PASS' ? 'PASS' : r.status === 'ERROR' ? 'ERROR' : 'FAIL';
+  const fm   = cellFor(r.output, 'FRONTMATTER');
+  const sub  = cellFor(r.output, 'SUBFOLDERS');
+  const desc = cellFor(r.output, 'DESCRIPTION');
+  const body = cellFor(r.output, 'BODY');
+  const deps = cellFor(r.output, 'INTERDEPS');
+  const status = r.status === 'PASS' ? 'PASS' : r.status === 'WARN' ? 'WARN' : r.status === 'ERROR' ? 'ERROR' : 'FAIL';
   console.log(`${col(r.skill, 24)} ${fm}    ${sub}    ${desc}    ${body}    ${deps}    ${status}`);
 }
 console.log('─'.repeat(72));
