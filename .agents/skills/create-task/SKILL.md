@@ -1,6 +1,6 @@
 ---
 name: create-task
-description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
+description: Orchestrate a full implementation task end-to-end: classify the type, branch safely, drive OpenSpec (explore → propose → apply → archive → vault-link), enforce security gates (CVE threat model + pre-archive audit + staged scan) and review gates (pre-commit-review with blocker taxonomy), then commit, push, and open the PR. Use when the user asks to add a feature, fix a bug, refactor code, write docs, add tests, improve performance, or create/modify a skill — even if they do not name branches, OpenSpec, or PRs. When the task involves UI component work (a11y, composition, design tokens, primitives), the apply phase loads `building-components` as bounded specialist guidance per §1. Remains authoritative when a specialist skill matches the task; a specialist completion summary never replaces verify/archive/security/commit/push/pr phases. Do NOT use for pure research, spike investigations, skill-only creation (use skill-authoring instead), or read-only summaries.
 license: MIT
 compatibility: Requires git, openspec CLI, gh CLI, and Node.js 18+ for the bundled scripts.
 metadata:
@@ -157,6 +157,17 @@ Stop and ask before any of these:
 
 Never auto-reset, force-push, or silently drop work.
 
+### 1.5 Specialist skill recognition
+
+The orchestrator recognises a small, explicit list of specialist skills and loads each as a bounded phase during `apply` per its trigger condition. The orchestrator does not auto-discover specialists from `.agents/skills/` — only the names listed here are wired in. New specialists are added by extending this table, not by scanning the folder.
+
+| Specialist | Load when the task… |
+| --- | --- |
+| `skill-authoring` | creates, modifies, fixes, or restructures a reusable skill under `.agents/skills/` (see also §5 gotcha). |
+| `building-components` | builds, modifies, or reviews UI components where accessibility, composition, design tokens, or component-level patterns apply (buttons, inputs, dropdowns, modals, accordions, or any component decision that needs a11y/composability/theming methodology). |
+
+The wiring rules (bounded phase, specialist completion ≠ task completion, clarification inside the specialist pauses the same `create-task` phase) live in §1.3 and §2.1. Do not duplicate them here.
+
 ## 2. OpenSpec phase integration
 
 OpenSpec phases are prompts, not executable subroutines. Apply their rules inline rather than reimplementing them. Per-phase mechanics live in `references/task-workflow.md`.
@@ -289,7 +300,7 @@ These are facts the orchestrator will get wrong without being told. Highest-valu
 - **PR must include the archived OpenSpec change.** If archive completion cannot be verified, stop before PR creation.
 - **Never use `git add -A` or `git add .`.** Stage only the intended files. The staged scan (§4.2) inspects the same files.
 - **`scripts/phase-status.mjs` exits with code 4** when openspec or gh is missing. Partial snapshots are still emitted; the orchestrator treats that as degraded but not blocking for the phases that don't depend on the missing tool.
-- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `skill-authoring` as a bounded specialist phase per §1.3, but the branch prefix and PR classification follow the chosen type.
+- **Skill-modification tasks reuse an existing type** (typically `docs` or `chore`). There is no `skill` type. The orchestrator still loads `skill-authoring` as a bounded specialist phase per §1.5, but the branch prefix and PR classification follow the chosen type.
 
 ## 6. Available scripts
 
@@ -333,7 +344,8 @@ Load on demand, not all at once. Update this index when paths move rather than c
 | --- | --- | --- |
 | `openspec-apply-change` | mentions | by name (bare) |
 | `openspec-vault-link` | invokes | by name (slash) |
-| `skill-authoring` | mentions | by name (bare) |
+| `skill-authoring` | loads | by name (slash) |
+| `building-components` | loads | by name (slash) |
 | `cve-scan` | invokes | by path |
 | `skill-sessions` | mentions | by name (bare) |
 | `customize-opencode` | loads | by name (bare) |

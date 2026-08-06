@@ -108,8 +108,30 @@ The `create-task` SKILL.md SHALL include a `## Gotchas` section enumerating non-
 - **WHEN** a reader scans the Gotchas section for the full-audit phase label
 - **THEN** it appears verbatim as `pre-archive` (not `pre-commit`)
 
+### Requirement: Specialist skill recognition
+
+The `create-task` orchestrator SHALL recognise named specialist skills and load each as a bounded phase during `apply` per its trigger condition. The current named specialists are:
+
+- `skill-authoring` — load when the task creates, modifies, or restructures a reusable skill (per §5 gotcha and the existing `Skill authoring phase completes` scenario in `### Requirement: Specialist guidance returns control to the orchestrator`).
+- `building-components` — load when the task builds, modifies, or reviews UI components (accessibility, composition, design tokens, component primitives, or any component-level decision where a11y, composability, or theming methodology applies).
+
+Recognition is documented in the orchestrator's `SKILL.md` and is the source of truth for which specialists the orchestrator knows about. The orchestrator does not auto-discover specialists from the `.agents/skills/` folder — it loads only the specialists explicitly listed in its SKILL.md. New specialists are added by extending the recognition table, not by scanning the folder.
+
+#### Scenario: Building a new UI component loads building-components
+
+- **WHEN** the user asks to add, refactor, or fix a UI component (button, input, dropdown, modal, accordion, or any domain component where accessibility or composition patterns apply) and explicitly invokes `create-task` (or the orchestrator loads per its description triggers)
+- **THEN** the orchestrator's `apply` phase loads `building-components` as bounded methodology guidance
+- **AND** the orchestrator continues to own the lifecycle; specialist completion is not task completion
+
+#### Scenario: Modifying an existing skill loads skill-authoring
+
+- **WHEN** the user asks to create, modify, fix, or restructure a reusable skill and the orchestrator classifies the task as `chore`, `fix`, `refactor`, or `docs` (per §1.1 task-type classification)
+- **THEN** the orchestrator's `apply` phase loads `skill-authoring` as bounded methodology guidance
+- **AND** the orchestrator continues to own the lifecycle; specialist completion is not task completion
+
 ## History
 
+- [[../../changes/archive/2026-08-05-create-task-add-building-components/proposal|create-task-add-building-components (2026-08-05)]] — Enumerate specialist skills the orchestrator recognises (`skill-authoring`, `building-components`) with trigger conditions; surface `building-components` in the frontmatter description; add `## Specialist skill recognition` subsection.
 - [[../../changes/archive/2026-08-03-improve-create-task-skill/proposal|improve-create-task-skill (2026-08-03)]] — Adopt agentskills.io patterns: reorganize docs into references/, add bin/phase-status.mjs + bin/slug-check.mjs helpers, scaffold evals/, tighten description, add Gotchas section and progressive-disclosure indexes.
 - [[../../changes/archive/2026-07-24-create-task-workflow/proposal|create-task-workflow (2026-07-24)]] — Implementation work currently depends on manually remembering several separate OpenSpec, Git, security, and PR steps.
 - [[../../changes/archive/2026-07-25-slim-create-task-mechanics/proposal|slim-create-task-mechanics (2026-07-25)]] — Extract per-phase mechanics from create-task to docs/task-workflow.md; replace §4.1 inline CVE prompts with a pointer to docs/cve-methodology.md.
